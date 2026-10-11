@@ -44,7 +44,7 @@ async function listUpdates() {
     const isOutdated = await fetchUpdate();
     if (!isOutdated) return [];
 
-    const data = await githubGet(`/compare/${gitHash}...HEAD`);
+    const data = await githubGet(`/compare/${gitHash}...prod`);
 
     return data.commits.map((c: any) => ({
         hash: c.sha,
@@ -61,6 +61,7 @@ async function fetchUpdate() {
         return false;
 
     const asset = data.assets.find(a => a.name === ASAR_FILE);
+    if (!asset) throw new Error(`The Allicord release is missing ${ASAR_FILE}.`);
     PendingUpdate = asset.browser_download_url;
 
     return true;

@@ -35,7 +35,7 @@ import { getEntryPoint, isPluginFile, parseDevs, parseEquicordDevs, parseFile, P
     } else if (vencordFlag) {
         dirs = ["src/plugins", "src/plugins/_core"];
     } else {
-        dirs = ["src/plugins", "src/plugins/_core", "src/equicordplugins/_core", "src/equicordplugins"];
+        dirs = ["src/plugins", "src/plugins/_core", "src/equicordplugins/_core", "src/equicordplugins", "src/allicordplugins"];
     }
 
     const outputPath = args.find(a => !a.startsWith("--")) ?? null;
@@ -46,6 +46,7 @@ import { getEntryPoint, isPluginFile, parseDevs, parseEquicordDevs, parseFile, P
         dirs.flatMap(dir =>
             readdirSync(dir, { withFileTypes: true })
                 .filter(isPluginFile)
+                .filter(dirent => !dirent.name.endsWith(".md"))
                 .map(async dirent => {
                     const [data] = await parseFile(await getEntryPoint(dir, dirent));
                     plugins.sort().push(data);
@@ -53,6 +54,11 @@ import { getEntryPoint, isPluginFile, parseDevs, parseEquicordDevs, parseFile, P
         )
     );
 
+    const names = new Set<string>();
+    for (const plugin of plugins) {
+        if (names.has(plugin.name)) throw new Error(`Duplicate plugin name: ${plugin.name}`);
+        names.add(plugin.name);
+    }
     const data = JSON.stringify(plugins);
 
     if (outputPath) {

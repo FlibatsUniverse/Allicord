@@ -1,0 +1,104 @@
+name: Allicord Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer matching package.json, e.g. 0.1.0'
+        required: true
+        type: string
+      publish:
+        description: 'Publish after validation (requires release approval)'
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: allicord-stable-release
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/prod'
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+      upstream: ${{ steps.source.outputs.upstream }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: source
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          node -e 'const v=process.env.VERSION_INPUT;if(!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(v)||v!==require("./package.json").version)process.exit(1)'
+          if git rev-parse "refs/tags/v$VERSION_INPUT" >/dev/null 2>&1; then echo 'Tag already exists; refusing replacement'; exit 1; fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "upstream=$(git rev-parse origin/main)" >> "$GITHUB_OUTPUT"
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Validate
+        run: |
+          node scripts/validateWorkflows.mjs
+          pnpm testTsc
+          pnpm lint
+          pnpm lint-styles
+          pnpm lint:intl
+          pnpm lint:patches
+          pnpm generatePluginJson > /dev/null
+          pnpm buildStandalone
+          pnpm buildWebStandalone
+      - name: Package release
+        run: |
+          mkdir release
+          for name in desktop equibop; do cp "dist/$name.asar" "release/Allicord-$name.asar"; done
+          cp dist/Allicord.user.* release/
+          cp dist/*.zip release/
+          cp dist/browser/*.LEGAL.txt release/
+          cp LICENSE release/
+          pnpm generatePluginJson release/plugins.json
+          tar -czf release/Allicord-browser.tar.gz -C dist browser
+          git archive --format=tar.gz HEAD > release/Allicord-source.tar.gz
+          cd release
+          sha256sum * > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: stable-release
+          path: release/
+          if-no-files-found: error
+  publish:
+    needs: build
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.build.outputs.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: stable-release
+          path: release
+      - name: Publish immutable stable tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_INPUT: ${{ inputs.version }}
+          SOURCE_SHA: ${{ needs.build.outputs.sha }}
+          UPSTREAM_SHA: ${{ needs.build.outputs.upstream }}
+        run: |
+          cd release && sha256sum -c SHA256SUMS && cd ..
+          git fetch origin prod
+          [ "$(git rev-parse origin/prod)" = "$SOURCE_SHA" ] || { echo 'prod changed; rerun validation'; exit 1; }
+          if git ls-remote --exit-code origin "refs/tags/v$VERSION_INPUT" >/dev/null; then echo 'Tag exists; refusing replacement'; exit 1; fi
+          git tag "v$VERSION_INPUT" "$SOURCE_SHA"
+          git push origin "refs/tags/v$VERSION_INPUT"
+          printf 'Source: https://github.com/FlibatsUniverse/Allicord/commit/%s\nUpstream mirror: https://github.com/Equicord/Equicord/commit/%s\nUniversal client bundles; no validated native installer is included.\n' "$SOURCE_SHA" "$UPSTREAM_SHA" > notes.md
+          gh release create "v$VERSION_INPUT" release/* --verify-tag --title "Allicord v$VERSION_INPUT $SOURCE_SHA" --notes-file notes.md --generate-notes

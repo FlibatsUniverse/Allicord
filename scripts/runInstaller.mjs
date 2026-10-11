@@ -25,6 +25,9 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { fileURLToPath } from "url";
 
+if (!process.env.ALLICORD_USE_UPSTREAM_INSTALLER)
+    throw new Error("Allicord has no validated dedicated installer yet. See README.md. Set ALLICORD_USE_UPSTREAM_INSTALLER=1 only to explicitly use the upstream Equilotl source installer.");
+
 const BASE_URL = "https://github.com/Equicord/Equilotl/releases/latest/download/";
 
 const BASE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");

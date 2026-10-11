@@ -52,7 +52,7 @@ export const gitHash = process.env.EQUICORD_HASH || execSync("git rev-parse HEAD
 
 export const banner = {
     js: `
-// Equicord ${gitHash}
+// Allicord by Alliance ${gitHash}
 // Standalone: ${IS_STANDALONE}
 // Platform: ${IS_STANDALONE === false ? process.platform : "Universal"}
 // Updater Disabled: ${IS_UPDATER_DISABLED}
@@ -147,7 +147,7 @@ export const globPlugins = kind => ({
         });
 
         build.onLoad({ filter, namespace: "import-plugins" }, async () => {
-            const pluginDirs = ["plugins/_api", "plugins/_core", "plugins", "equicordplugins/_api", "equicordplugins/_core", "equicordplugins", "userplugins"];
+            const pluginDirs = ["plugins/_api", "plugins/_core", "plugins", "equicordplugins/_api", "equicordplugins/_core", "equicordplugins", "allicordplugins", "userplugins"];
             let code = "";
             let pluginsCode = "\n";
             let metaCode = "\n";
@@ -162,7 +162,7 @@ export const globPlugins = kind => ({
                 for (const file of files) {
                     const fileName = file.name;
                     if (fileName.startsWith("_") || fileName.startsWith(".")) continue;
-                    if (fileName === "index.ts") continue;
+                    if (fileName === "index.ts" || fileName.endsWith(".md")) continue;
                     if (/\.(zip|rar|7z|tar|gz|bz2)/.test(fileName)) continue;
 
                     const target = getPluginTarget(fileName);

@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
     "minimum_chrome_version": "91",
-    "name": "Equicord Web",
-    "description": "The other cutest Discord mod now in your browser",
-    "author": "Equicord",
-    "homepage_url": "https://github.com/Equicord/Equicord",
+    "name": "Allicord Web",
+    "description": "A Discord client modification by Alliance, built on Equicord.",
+    "author": "Alliance",
+    "homepage_url": "https://github.com/FlibatsUniverse/Allicord",
     "icons": {
         "128": "icon.png"
     },
@@ -49,7 +49,7 @@
     ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "firefox@equicord.org",
+            "id": "allicord@flibatsuniverse.github.io",
             "strict_min_version": "128.0",
             "data_collection_permissions": {
                 "required": [
