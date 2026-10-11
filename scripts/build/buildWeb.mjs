@@ -107,7 +107,7 @@ const buildConfigs = [
         },
         outfile: "dist/Allicord.user.js",
         banner: {
-            js: readFileSync("browser/userscript.meta.js", "utf-8").replace("%version%", `${VERSION}.${new Date().getTime()}`)
+            js: readFileSync("browser/userscript.meta.js", "utf-8").replace("%version%", `${VERSION}.${BUILD_TIMESTAMP}`)
         },
         footer: {
             // UserScripts get wrapped in an iife, so define Vencord prop on window that returns our local

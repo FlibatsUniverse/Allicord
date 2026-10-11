@@ -61,7 +61,7 @@ jobs:
           mkdir release
           for name in desktop equibop; do cp "dist/$name.asar" "release/Allicord-$name.asar"; done
           cp dist/Allicord.user.* release/
-          cp dist/*.zip release/
+          for file in dist/*.zip; do cp "$file" "release/Allicord-$(basename "$file")"; done
           cp dist/browser/*.LEGAL.txt release/
           cp LICENSE release/
           pnpm generatePluginJson release/plugins.json
