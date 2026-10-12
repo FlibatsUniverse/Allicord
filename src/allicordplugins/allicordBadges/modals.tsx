@@ -63,7 +63,7 @@ function openBadgeModal({ title, heart, images, text, action }: BadgeModalOption
 export function UniverseModal(apiOrigin: string) {
     openBadgeModal({
         title: "Flibat's Universe",
-        images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/api/badges/universe.svg?color=${c}`),
+        images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/api/badges/flibatsuniverse.svg?color=${c}`),
         text: [
             "This badge is given to the community moderators of Flibat's Universe, the company behind Alliance Development.",
             "Its color matches the member's rank in the community."
