@@ -17,7 +17,6 @@ import { classNameFactory } from "@utils/css";
 import definePlugin, { OptionType } from "@utils/types";
 import { RenderModalProps } from "@vencord/discord-types";
 import { Forms, Modal, openModal, RelationshipStore, Tooltip, useStateFromStores } from "@webpack/common";
-
 import besties from "file://../../../assets/plugins/friendshipRanks/besties.png?base64";
 import blooming from "file://../../../assets/plugins/friendshipRanks/blooming.png?base64";
 import burning from "file://../../../assets/plugins/friendshipRanks/burning.png?base64";
