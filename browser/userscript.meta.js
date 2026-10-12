@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Allicord
-// @description     A Discord client mod - Web version
+// @description     The softest Discord client mod - Web version
 // @version         %version%
 // @author          ItzFlibat (https://github.com/ItzFlibat)
 // @namespace       https://github.com/FlibatsUniverse/Allicord

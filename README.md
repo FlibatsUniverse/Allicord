@@ -2,7 +2,7 @@
 
 <img src="assets/alliance.svg" width="96" alt="Alliance logo">
 
-Allicord is an enhanced Discord client modification by Alliance, built on [Equicord](https://github.com/Equicord/Equicord) and [Vencord](https://github.com/Vendicated/Vencord).
+Allicord is the softest Discord client mod, by Alliance, built on [Equicord](https://github.com/Equicord/Equicord) and [Vencord](https://github.com/Vendicated/Vencord).
 
 [![Build](https://github.com/FlibatsUniverse/Allicord/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/FlibatsUniverse/Allicord/actions/workflows/build.yml)
 [Latest release](https://github.com/FlibatsUniverse/Allicord/releases/latest) · [Alliance projects](https://github.com/FlibatsUniverse) · [AllianceBot](https://github.com/FlibatsUniverse/AllianceBot)
