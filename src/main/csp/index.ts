@@ -62,7 +62,13 @@ export const CspPolicies: PolicyMap = {
     "*.archive.org": ConnectSrc,
     "translate-pa.googleapis.com": ConnectSrc, // Google Translate API
     "*.vencord.dev": ImageSrc, // VenCloud (api.vencord.dev) and Badges (badges.vencord.dev)
-    "equicord.org": ImageSrc, // Equicord assets (plugin source badges, icons)
+    "*.equicord.org": ImageSrc, // Equicord assets (plugin source badges, icons)
+    "equicord.org": ImageSrc,
+    "alliance.flibat.com": ImageSrc, // Allicord badge API and badge images
+    "nekocord.dev": ImageSrc, // Badge images used by AllicordBadges
+    "aliucord.com": ImageSrc,
+    "paicord.llsc12.me": ImageSrc,
+    "plugins.obamabot.me": ImageSrc,
     "manti.vendicated.dev": ImageSrc, // ReviewDB API
     "decor.fieryflames.dev": ConnectSrc, // Decor API
     "ugc.decor.fieryflames.dev": ImageSrc, // Decor CDN

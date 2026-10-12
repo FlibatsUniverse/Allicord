@@ -22,6 +22,7 @@ import { getEntryPoint, isPluginFile, parseDevs, parseEquicordDevs, parseFile, P
 (async () => {
     parseDevs();
     parseEquicordDevs();
+    parseEquicordDevs("AllicordDevs");
 
     const args = process.argv.slice(2);
 

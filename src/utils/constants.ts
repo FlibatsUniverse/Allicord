@@ -709,6 +709,13 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     }
 } satisfies Record<string, Dev>);
 
+export const AllicordDevs = Object.freeze({
+    Flibat: {
+        name: "Flibat",
+        id: 646183151441281035n
+    }
+} satisfies Record<string, Dev>);
+
 export const EquicordDevs = Object.freeze({
     nobody: {
         name: "nobody",
@@ -1469,6 +1476,14 @@ export const EquicordDevs = Object.freeze({
 export const VencordDevsById = /* #__PURE__*/ (() =>
     Object.freeze(Object.fromEntries(
         Object.entries(Devs)
+            .filter(d => d[1].id !== 0n)
+            .map(([_, v]) => [v.id, v] as const)
+    ))
+)() as Record<string, Dev>;
+
+export const AllicordDevsById = /* #__PURE__*/ (() =>
+    Object.freeze(Object.fromEntries(
+        Object.entries(AllicordDevs)
             .filter(d => d[1].id !== 0n)
             .map(([_, v]) => [v.id, v] as const)
     ))
