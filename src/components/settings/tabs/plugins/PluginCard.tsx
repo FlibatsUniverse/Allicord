@@ -18,6 +18,7 @@ import { React, showToast } from "@webpack/common";
 import { PluginMeta } from "~plugins";
 
 import { openPluginModal } from "./PluginModal";
+import { SourceIcons } from "./sourceIcons";
 
 const logger = new Logger("PluginCard");
 const cl = classNameFactory("vc-plugins-");
@@ -33,6 +34,7 @@ interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
 export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
     const pluginMeta = PluginMeta[plugin.name];
+    const isAllicordPlugin = pluginMeta.folderName.startsWith("src/allicordplugins/") ?? false;
     const isEquicordPlugin = pluginMeta.folderName.startsWith("src/equicordplugins/") ?? false;
     const isVencordPlugin = pluginMeta.folderName.startsWith("src/plugins/") ?? false;
     const isUserPlugin = pluginMeta?.userPlugin ?? false;
@@ -91,25 +93,31 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
     const pluginInfo = [
         {
             condition: isModifiedPlugin,
-            src: "https://equicord.org/assets/icons/equicord/modified.png",
+            src: SourceIcons.modified,
             alt: "Modified",
             title: "Modified Vencord Plugin"
         },
         {
+            condition: isAllicordPlugin,
+            src: SourceIcons.allicord,
+            alt: "Allicord",
+            title: "Allicord Plugin"
+        },
+        {
             condition: isEquicordPlugin,
-            src: "https://equicord.org/assets/favicon.png",
+            src: SourceIcons.equicord,
             alt: "Equicord",
             title: "Equicord Plugin"
         },
         {
             condition: isVencordPlugin,
-            src: "https://equicord.org/assets/icons/vencord/icon-light.png",
+            src: SourceIcons.vencord,
             alt: "Vencord",
             title: "Vencord Plugin"
         },
         {
             condition: isUserPlugin,
-            src: "https://equicord.org/assets/icons/misc/userplugin.png",
+            src: SourceIcons.user,
             alt: "User",
             title: "User Plugin"
         }

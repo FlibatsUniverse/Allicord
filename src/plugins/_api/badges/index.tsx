@@ -22,6 +22,7 @@ import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Bad
 import ErrorBoundary from "@components/ErrorBoundary";
 import { CopyIcon, LinkIcon } from "@components/Icons";
 import { openContributorModal } from "@components/settings/tabs";
+import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
 import { Devs } from "@utils/constants";
 import { copyWithToast } from "@utils/discord";
 import { Logger } from "@utils/Logger";
@@ -34,8 +35,8 @@ import Plugins, { PluginMeta } from "~plugins";
 import { EquicordDonorModal, EquicordTranslatorModal, VencordDonorModal } from "./modals";
 
 const CONTRIBUTOR_BADGE = "https://cdn.discordapp.com/emojis/1092089799109775453.png?size=64";
-const EQUICORD_CONTRIBUTOR_BADGE = "https://equicord.org/assets/favicon.png";
-const USERPLUGIN_CONTRIBUTOR_BADGE = "https://equicord.org/assets/icons/misc/userplugin.png";
+const EQUICORD_CONTRIBUTOR_BADGE = SourceIcons.equicord;
+const USERPLUGIN_CONTRIBUTOR_BADGE = SourceIcons.user;
 
 const ContributorBadge: ProfileBadge = {
     id: "vencord_contributor_badge",

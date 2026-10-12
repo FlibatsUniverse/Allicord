@@ -27,7 +27,7 @@ Install with pnpm install --frozen-lockfile using Node 24 and packageManager fro
 
 ## Upstream synchronization
 
-Every six hours, synchronization fast-forwards upstream. A second workflow merges upstream into a temporary branch, validates it without write credentials, then opens or updates one PR to dev. Merge conflicts leave dev unchanged and update a tracking issue. Resolve conflicts on an integration branch, preserve Alliance changes and upstream attribution, run all checks, and merge with history preserved. See [UPSTREAM.md](UPSTREAM.md).
+Equicord changes are merged into dev manually; resolve conflicts on an integration branch, preserve Alliance changes and upstream attribution, run all checks, and merge with history preserved. See [UPSTREAM.md](UPSTREAM.md).
 
 ## AI assistance
 

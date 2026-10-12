@@ -17,7 +17,6 @@ jobs:
     outputs:
       sha: ${{ steps.source.outputs.sha }}
       tag: ${{ steps.source.outputs.tag }}
-      upstream: ${{ steps.source.outputs.upstream }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -32,7 +31,6 @@ jobs:
           node -e 'if(!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(require("./package.json").version))process.exit(1)'
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "tag=v$version+build.$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "upstream=$(git rev-parse origin/upstream)" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: Allicord-${{ github.event.workflow_run.head_sha }}
@@ -92,7 +90,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.package.outputs.tag }}
           SOURCE_SHA: ${{ needs.package.outputs.sha }}
-          UPSTREAM_SHA: ${{ needs.package.outputs.upstream }}
         run: |
           cd release && sha256sum -c SHA256SUMS && cd ..
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then echo 'Release already published'; exit 0; fi
@@ -103,7 +100,7 @@ jobs:
             git tag "$RELEASE_TAG" "$SOURCE_SHA"
             git push origin "refs/tags/$RELEASE_TAG"
           fi
-          printf 'Source: https://github.com/FlibatsUniverse/Allicord/commit/%s\nUpstream: https://github.com/Equicord/Equicord/commit/%s\nIncludes an unsigned Windows graphical installer and terminal installers, client bundles and SHA-256 checksums. Close Discord before installing or repairing. Live Discord runtime testing remains ongoing.\n' "$SOURCE_SHA" "$UPSTREAM_SHA" > notes.md
+          printf 'Source: https://github.com/FlibatsUniverse/Allicord/commit/%s\nIncludes an unsigned Windows graphical installer and terminal installers, client bundles and SHA-256 checksums. Close Discord before installing or repairing. Live Discord runtime testing remains ongoing.\n' "$SOURCE_SHA" > notes.md
           latest=false
           git fetch origin main
           if [ "$(git rev-parse origin/main)" = "$SOURCE_SHA" ]; then latest=true; fi

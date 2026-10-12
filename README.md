@@ -36,7 +36,7 @@ Load the Chromium ZIP unpacked through your browser's extension developer mode. 
 
 ## Automatic releases
 
-main contains stable Allicord code and is the default branch. Every main push is validated, then automatically published with its client bundles and a Windows graphical installer and six terminal installers. Failed builds are not released. Release tags use the package's semantic version with unique build metadata, for example v0.1.0+build.12, and retain their exact source commit. dev is the development branch; upstream is the clean Equicord mirror synchronized every six hours. See [UPSTREAM.md](UPSTREAM.md).
+main contains stable Allicord code and is the default branch. Every main push is validated, then automatically published with its client bundles and a Windows graphical installer and six terminal installers. Failed builds are not released. Release tags use the package's semantic version with unique build metadata, for example v0.1.0+build.12, and retain their exact source commit. dev is the development branch. See [UPSTREAM.md](UPSTREAM.md) for how Equicord changes are merged.
 
 ## Build and contribute
 

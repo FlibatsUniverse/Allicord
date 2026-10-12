@@ -5,7 +5,9 @@
 // @author          ItzFlibat (https://github.com/ItzFlibat)
 // @namespace       https://github.com/FlibatsUniverse/Allicord
 // @supportURL      https://github.com/FlibatsUniverse/Allicord/issues
-// @icon            https://raw.githubusercontent.com/FlibatsUniverse/Allicord/dev/assets/alliance.svg
+// @icon            https://raw.githubusercontent.com/FlibatsUniverse/Allicord/main/browser/icon.png
+// @updateURL       https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord.user.js
+// @downloadURL     https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord.user.js
 // @license         GPL-3.0
 // @match           *://*.discord.com/*
 // @grant           GM_xmlhttpRequest

@@ -4,7 +4,7 @@ Allicord is a genuine GitHub fork of Equicord, with Vencord as the root source. 
 
 Alliance plugins live in src/allicordplugins/, with renderer discovery, native companions and combined plugin catalog integration. They use the existing PluginManager and Settings APIs. Original Equicord/Vencord plugin and contributor identities remain intact.
 
-main is stable Allicord and the default branch. dev is development and upstream is the clean Equicord mirror. prod is a retained historical reference. Every push to main/dev runs client validation and installer tests/builds. Only successful main push runs can trigger automatic stable publication.
+main is stable Allicord and the default branch. dev is development. Every push to main/dev runs client validation and installer tests/builds. Only successful main push runs can trigger automatic stable publication.
 
 Client builds use Node 24, pnpm 12.8.1 and the frozen lockfile. The installer source in installer/ is adapted from a pinned Equilotl commit under GPL, with Go 1.26.2 and a locked module graph. A Windows x64 graphical installer is built with MinGW and the inherited giu interface. Six CGO-free CLI binaries are cross-compiled for Windows, macOS and Linux x64/ARM64. Tests check temporary-file installation/uninstallation and valid/invalid downloaded client checksums. Cross-compilation does not establish live platform compatibility.
 
