@@ -60,6 +60,7 @@ jobs:
           cp dist/browser/*.LEGAL.txt release/
           cp installers/AllicordInstaller* release/
           cp gui/AllicordInstaller.exe release/
+          cp gui/Allicord-gui-licenses.tar.gz release/
           cp LICENSE release/
           cp dist/plugins.json release/
           tar -czf release/Allicord-installer-licenses.tar.gz -C installers licenses

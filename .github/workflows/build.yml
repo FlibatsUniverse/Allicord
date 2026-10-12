@@ -118,6 +118,12 @@ jobs:
           mkdir -p ../dist/gui
           version=$(node -p 'require("../package.json").version')
           go build -mod=readonly -trimpath -tags 'static gui' -ldflags "-s -w -H=windowsgui -extldflags=-static -X equilotl/buildinfo.InstallerGitHash=$SOURCE_SHA -X equilotl/buildinfo.InstallerTag=v$version+build.$BUILD_NUMBER" -o ../dist/gui/AllicordInstaller.exe .
+          mkdir -p ../dist/gui/licenses
+          for file in /usr/share/doc/*mingw*/copyright /usr/share/doc/gcc-*-base/copyright; do
+            cp "$file" "../dist/gui/licenses/$(basename "$(dirname "$file")").copyright"
+          done
+          cp /usr/share/common-licenses/GPL-3 /usr/share/common-licenses/LGPL-3 /usr/share/common-licenses/LGPL-2.1 ../dist/gui/licenses/
+          tar -czf ../dist/gui/Allicord-gui-licenses.tar.gz -C ../dist/gui licenses
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Allicord-gui-${{ github.sha }}
