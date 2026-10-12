@@ -79,7 +79,7 @@ async function loadBadges() {
 
 // What clicking an Allicord badge opens.
 function openBadge(kind: string | undefined, userId: string) {
-    const origin = new URL(settings.store.apiUrl).origin;
+    const { origin } = new URL(settings.store.apiUrl);
     switch (kind) {
         case "contributor":
         case "developer": {
