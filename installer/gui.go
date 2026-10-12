@@ -81,6 +81,7 @@ func main() {
 	}
 
 	win = g.NewMasterWindow("Allicord Installer", 1200, 800, linuxFlags)
+	win.SetBgColor(AllicordBackground)
 
 	icon, _, err := image.Decode(bytes.NewReader(iconBytes))
 	if err != nil {
@@ -463,8 +464,8 @@ func renderInstaller() g.Widget {
 	layout := g.Layout{
 		g.Style().SetFontSize(20).To(
 			renderErrorCard(
-				DiscordYellow,
-				color.Black,
+				AllicordCard,
+				AllicordMuted,
 				"**Allicord Installer** by Alliance. Select a Discord installation below. Installing Allicord replaces the client modification in the selected installation.",
 				90,
 			),
@@ -513,7 +514,7 @@ func renderInstaller() g.Widget {
 
 				return g.Row(
 					g.RadioButton(text, radioIdx == i).OnChange(makeRadioOnChange(i)),
-					g.Style().SetColor(g.StyleColorText, color.RGBA{0xff, 0xff, 0xff, 0x80}).To(g.Label(" "+d.path)),
+					g.Style().SetColor(g.StyleColorText, AllicordMuted).To(g.Label(" "+d.path)),
 				)
 			}),
 			&CondWidget{showCustomLocation, func() g.Widget {
@@ -577,9 +578,10 @@ func renderInstaller() g.Widget {
 		g.Style().SetFontSize(20).To(
 			g.Row(
 				g.Style().
-					SetColor(g.StyleColorButton, DiscordGreen).
-					SetColor(g.StyleColorButtonHovered, DiscordGreenHovered).
-					SetStyle(g.StyleVarFrameRounding, 8, 8).
+					SetColor(g.StyleColorButton, AllicordBrand).
+					SetColor(g.StyleColorButtonHovered, AllicordBrandHovered).
+					SetColor(g.StyleColorText, AllicordBackground).
+					SetStyle(g.StyleVarFrameRounding, 12, 12).
 					SetDisabled(GithubError != nil).
 					To(
 						g.Button("Install").
@@ -588,9 +590,9 @@ func renderInstaller() g.Widget {
 						Tooltip("Patch the selected Discord Install"),
 					),
 				g.Style().
-					SetColor(g.StyleColorButton, DiscordBlue).
-					SetColor(g.StyleColorButtonHovered, DiscordBlueHovered).
-					SetStyle(g.StyleVarFrameRounding, 8, 8).
+					SetColor(g.StyleColorButton, AllicordSurface).
+					SetColor(g.StyleColorButtonHovered, AllicordSurfaceHover).
+					SetStyle(g.StyleVarFrameRounding, 12, 12).
 					SetDisabled(GithubError != nil).
 					To(
 						g.Button("Reinstall / Repair").
@@ -608,9 +610,9 @@ func renderInstaller() g.Widget {
 						Tooltip("Reinstall & Update Allicord"),
 					),
 				g.Style().
-					SetColor(g.StyleColorButton, DiscordRed).
-					SetColor(g.StyleColorButtonHovered, DiscordRedHovered).
-					SetStyle(g.StyleVarFrameRounding, 8, 8).
+					SetColor(g.StyleColorButton, AllicordDanger).
+					SetColor(g.StyleColorButtonHovered, AllicordDangerHover).
+					SetStyle(g.StyleVarFrameRounding, 12, 12).
 					To(
 						g.Button("Uninstall").
 							OnClick(handleUnpatch).
@@ -618,9 +620,9 @@ func renderInstaller() g.Widget {
 						Tooltip("Unpatch the selected Discord Install"),
 					),
 				g.Style().
-					SetColor(g.StyleColorButton, Ternary(isOpenAsar, DiscordRed, DiscordGreen)).
-					SetColor(g.StyleColorButtonHovered, Ternary(isOpenAsar, DiscordRedHovered, DiscordGreenHovered)).
-					SetStyle(g.StyleVarFrameRounding, 8, 8).
+					SetColor(g.StyleColorButton, Ternary(isOpenAsar, AllicordDanger, AllicordSurface)).
+					SetColor(g.StyleColorButtonHovered, Ternary(isOpenAsar, AllicordDangerHover, AllicordSurfaceHover)).
+					SetStyle(g.StyleVarFrameRounding, 12, 12).
 					To(
 						g.Button(Ternary(isOpenAsar, "Uninstall OpenAsar", Ternary(currentDiscord != nil, "Install OpenAsar", "(Un-)Install OpenAsar"))).
 							OnClick(handleOpenAsar).
@@ -658,9 +660,10 @@ func renderInstaller() g.Widget {
 func renderErrorCard(bgColor color.Color, textColor color.Color, message string, height float32) g.Widget {
 	return g.Style().
 		SetColor(g.StyleColorChildBg, bgColor).
-		SetStyleFloat(g.StyleVarAlpha, 0.9).
-		SetStyle(g.StyleVarWindowPadding, 10, 10).
-		SetStyleFloat(g.StyleVarChildRounding, 5).
+		SetColor(g.StyleColorBorder, AllicordBorder).
+		SetStyleFloat(g.StyleVarChildBorderSize, 1).
+		SetStyle(g.StyleVarWindowPadding, 16, 14).
+		SetStyleFloat(g.StyleVarChildRounding, 12).
 		To(
 			g.Child().
 				Size(g.Auto, height).
@@ -674,7 +677,29 @@ func renderErrorCard(bgColor color.Color, textColor color.Color, message string,
 		)
 }
 
+func pushTheme() int {
+	colors := map[g.StyleColorID]color.Color{
+		g.StyleColorWindowBg:       AllicordBackground,
+		g.StyleColorPopupBg:        AllicordCard,
+		g.StyleColorText:           AllicordText,
+		g.StyleColorBorder:         AllicordBorder,
+		g.StyleColorFrameBg:        AllicordCard,
+		g.StyleColorFrameBgHovered: AllicordSurface,
+		g.StyleColorFrameBgActive:  AllicordSurfaceHover,
+		g.StyleColorCheckMark:      AllicordBrand,
+		g.StyleColorButton:         AllicordSurface,
+		g.StyleColorButtonHovered:  AllicordSurfaceHover,
+		g.StyleColorButtonActive:   AllicordSurfaceHover,
+		g.StyleColorTextSelectedBg: color.RGBA{0xca, 0xa7, 0xf5, 0x4d},
+	}
+	for id, c := range colors {
+		g.PushStyleColor(id, c)
+	}
+	return len(colors)
+}
+
 func loop() {
+	popColors := pushTheme()
 	g.PushWindowPadding(48, 48)
 
 	g.SingleWindow().
@@ -692,16 +717,19 @@ func loop() {
 		).
 		Layout(
 			g.Align(g.AlignCenter).To(
-				g.Style().SetFontSize(40).To(
+				g.Style().SetFontSize(40).SetColor(g.StyleColorText, AllicordBrand).To(
 					g.Label("Allicord Installer"),
 				),
+				g.Style().SetFontSize(20).SetColor(g.StyleColorText, AllicordMuted).To(
+					g.Label("Install, repair, or remove Allicord on your Discord."),
+				),
 			),
-			g.Dummy(0, 40),
+			g.Dummy(0, 30),
 
 			&CondWidget{
 				GithubError != nil,
 				func() g.Widget {
-					return g.Style().SetFontSize(20).To(renderErrorCard(DiscordRed, color.White, "Failed to fetch Info from GitHub. If this issue persists, visit "+SupportUrl+" for help.", 40))
+					return g.Style().SetFontSize(20).To(renderErrorCard(AllicordErrorCard, AllicordText, "Failed to fetch Info from GitHub. If this issue persists, visit "+SupportUrl+" for help.", 40))
 				},
 				nil,
 			},
@@ -710,4 +738,5 @@ func loop() {
 		)
 
 	g.PopStyle()
+	g.PopStyleColorV(popColors)
 }

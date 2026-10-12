@@ -18,6 +18,14 @@ import definePlugin, { OptionType } from "@utils/types";
 import { RenderModalProps } from "@vencord/discord-types";
 import { Forms, Modal, openModal, RelationshipStore, Tooltip, useStateFromStores } from "@webpack/common";
 
+import besties from "file://../../../assets/plugins/friendshipRanks/besties.png?base64";
+import blooming from "file://../../../assets/plugins/friendshipRanks/blooming.png?base64";
+import burning from "file://../../../assets/plugins/friendshipRanks/burning.png?base64";
+import fighter from "file://../../../assets/plugins/friendshipRanks/fighter.png?base64";
+import royal from "file://../../../assets/plugins/friendshipRanks/royal.png?base64";
+import sprout from "file://../../../assets/plugins/friendshipRanks/sprout.png?base64";
+import star from "file://../../../assets/plugins/friendshipRanks/star.png?base64";
+
 interface rankInfo {
     title: string;
     description: string;
@@ -52,43 +60,43 @@ const ranks: rankInfo[] =
             title: "Sprout",
             description: "Your friendship is just starting",
             requirement: 0,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/sprout.png"
+            iconSrc: `data:image/png;base64,${sprout}`
         },
         {
             title: "Blooming",
             description: "Your friendship is getting there! (1 Month)",
             requirement: 30,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/blooming.png"
+            iconSrc: `data:image/png;base64,${blooming}`
         },
         {
             title: "Burning",
             description: "Your friendship has reached terminal velocity (3 Months)",
             requirement: 90,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/burning.png"
+            iconSrc: `data:image/png;base64,${burning}`
         },
         {
             title: "Fighter",
             description: "Your friendship is strong (6 Months)",
             requirement: 182.5,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/fighter.png"
+            iconSrc: `data:image/png;base64,${fighter}`
         },
         {
             title: "Star",
             description: "Your friendship has been going on for a WHILE (1 Year)",
             requirement: 365,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/star.png"
+            iconSrc: `data:image/png;base64,${star}`
         },
         {
             title: "Royal",
             description: "Your friendship has gone through thick and thin- a whole 2 years!",
             requirement: 730,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/royal.png"
+            iconSrc: `data:image/png;base64,${royal}`
         },
         {
             title: "Besties",
             description: "How do you even manage this??? (5 Years)",
             requirement: 1826.25,
-            iconSrc: "https://equicord.org/assets/plugins/friendshipRanks/besties.png"
+            iconSrc: `data:image/png;base64,${besties}`
         }
     ];
 
