@@ -10,6 +10,7 @@
 // @downloadURL     https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord.user.js
 // @license         GPL-3.0
 // @match           *://*.discord.com/*
+// @connect         *
 // @grant           GM_xmlhttpRequest
 // @grant           unsafeWindow
 // @run-at          document-start

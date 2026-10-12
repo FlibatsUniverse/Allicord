@@ -6,6 +6,7 @@
 
 import "./styles.css";
 
+import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
 import badges from "@plugins/_api/badges";
 import { Devs, EquicordDevs } from "@utils/constants";
 import { isEquicordPluginDev, isPluginDev } from "@utils/misc";
@@ -58,7 +59,7 @@ function CheckBadge({ badge, author }: { badge: string; author: User; }): JSX.El
                         className={roleIcon}
                         name="Equicord Contributor"
                         size={20}
-                        src={"https://equicord.org/assets/favicon.png"}
+                        src={SourceIcons.equicord}
                     />
                 </span>
             ) : null;
