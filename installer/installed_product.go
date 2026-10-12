@@ -99,8 +99,8 @@ func detectInstalledProduct(loader string) string {
 				break
 			}
 		}
-	} else if virtual := strings.Index(strings.ToLower(filepath.ToSlash(target)), ".asar/"); virtual >= 0 {
-		banner = readAsarPrefix(target[:virtual+5], filepath.ToSlash(target[virtual+6:]))
+	} else if virtual := regexp.MustCompile(`(?i)\.asar/`).FindStringIndex(filepath.ToSlash(target)); virtual != nil {
+		banner = readAsarPrefix(target[:virtual[0]+5], filepath.ToSlash(target[virtual[0]+6:]))
 	} else if strings.EqualFold(filepath.Ext(target), ".js") {
 		banner = readScriptPrefix(target)
 	} else {

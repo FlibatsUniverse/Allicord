@@ -8,6 +8,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"os"
 	"os/exec"
@@ -196,6 +197,24 @@ func isEquicordLoaderAppAsar(appAsar string) (bool, error) {
 	stat, err := os.Stat(appAsar)
 	if err != nil {
 		return false, err
+	}
+	if stat.IsDir() {
+		data, err := os.ReadFile(path.Join(appAsar, "package.json"))
+		if err != nil {
+			return false, err
+		}
+		var pkg struct {
+			Name string
+			Main string
+		}
+		if err := json.Unmarshal(data, &pkg); err != nil {
+			return false, err
+		}
+		index, err := os.ReadFile(path.Join(appAsar, "index.js"))
+		if err != nil {
+			return false, err
+		}
+		return pkg.Name == "discord" && pkg.Main == "index.js" && bytes.Contains(index, []byte("require(")), nil
 	}
 	if stat.Size() > 128*1024 {
 		return false, nil

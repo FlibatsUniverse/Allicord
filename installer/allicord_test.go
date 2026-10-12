@@ -192,3 +192,40 @@ func TestUnknownModificationIsNotAllicord(t *testing.T) {
 		t.Fatalf("Incorrect label: %s", label)
 	}
 }
+
+func TestReplaceAndUninstallFolderShim(t *testing.T) {
+	directory := t.TempDir()
+	original := []byte("original Discord archive")
+	if err := os.WriteFile(filepath.Join(directory, "_app.asar"), original, 0644); err != nil {
+		t.Fatal(err)
+	}
+	shim := filepath.Join(directory, "app.asar")
+	if err := os.Mkdir(shim, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(shim, "package.json"), []byte(`{"name":"discord","main":"index.js"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(shim, "index.js"), []byte(`require("legacy-equicord.asar/patcher.js");`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := unpatchAppAsar(directory, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := patchAppAsar(directory, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := unpatchAppAsar(directory, false); err != nil {
+		t.Fatal(err)
+	}
+	result, err := os.ReadFile(filepath.Join(directory, "app.asar"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(result, original) {
+		t.Fatal("Replacing the folder shim lost the original Discord archive")
+	}
+	if _, err := os.Stat(filepath.Join(directory, "app.asar.tmp")); !os.IsNotExist(err) {
+		t.Fatal("Temporary shim was not cleaned up")
+	}
+}
