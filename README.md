@@ -9,15 +9,16 @@ Allicord is an enhanced Discord client modification by Alliance, built on [Equic
 
 ## Installing, repairing and uninstalling
 
-Download the installer for your platform. These are unsigned **terminal installers** adapted from Equilotl. Windows users can double-click the .exe, select their Discord installation, and choose Install, Repair or Uninstall. Close Discord before making changes, then restart it afterward. Installation and uninstallation are tested with simulated Discord files; live Discord and cross-platform runtime validation remain ongoing.
+Download the installer for your platform. The Windows x64 download is an unsigned **graphical installer** adapted from Equilotl. Windows users can double-click the .exe, select their Discord installation, and choose Install, Repair or Uninstall. Close Discord before making changes, then restart it afterward. Installation and uninstallation are tested with simulated Discord files; live Discord and cross-platform runtime validation remain ongoing.
 
 | Platform | x64 | ARM64 |
 | --- | --- | --- |
-| Windows | [Download .exe](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller.exe) | [Download .exe](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-arm64.exe) |
-| macOS | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-arm64) |
-| Linux | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-arm64) |
+| Windows GUI | [Download .exe](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller.exe) | Use the ARM64 CLI below |
+| Windows CLI | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstallerCli.exe) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstallerCli-arm64.exe) |
+| macOS CLI | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-arm64) |
+| Linux CLI | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-arm64) |
 
-On macOS/Linux, run chmod +x on the downloaded file and launch it from your terminal. --help lists options, including --install, --repair and --uninstall. The installer downloads Allicord's own client bundle and verifies its SHA-256 checksum before replacing an existing build. Shared Equicord data paths remain for compatibility; replace the existing modification instead of installing both into one Discord instance.
+On macOS/Linux, run chmod +x on the downloaded file and launch it from your terminal. --help lists options, including --install, --repair and --uninstall. The installer downloads Allicord's own client bundle and verifies its SHA-256 checksum before replacing an existing build. Existing installations are identified by the actual client loaded by Discord, so Equicord is labeled as Equicord. Allicord uses a separate data folder and client bundle; installing it replaces the modification only in the selected Discord installation. Previous Allicord settings stored in the old shared Equicord folder can be transferred with settings export/import.
 
 ## Browser and client downloads
 
@@ -35,7 +36,7 @@ Load the Chromium ZIP unpacked through your browser's extension developer mode. 
 
 ## Automatic releases
 
-main contains stable Allicord code and is the default branch. Every main push is validated, then automatically published with its client bundles and six terminal installers. Failed builds are not released. Release tags use the package's semantic version with unique build metadata, for example v0.1.0+build.12, and retain their exact source commit. dev is the development branch; upstream is the clean Equicord mirror synchronized every six hours. See [UPSTREAM.md](UPSTREAM.md).
+main contains stable Allicord code and is the default branch. Every main push is validated, then automatically published with its client bundles and a Windows graphical installer and six terminal installers. Failed builds are not released. Release tags use the package's semantic version with unique build metadata, for example v0.1.0+build.12, and retain their exact source commit. dev is the development branch; upstream is the clean Equicord mirror synchronized every six hours. See [UPSTREAM.md](UPSTREAM.md).
 
 ## Build and contribute
 

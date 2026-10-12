@@ -149,7 +149,7 @@ if (!IS_VANILLA) {
         s.set("DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", true);
     });
 
-    process.env.DATA_DIR = join(app.getPath("userData"), "..", "Equicord");
+    process.env.DATA_DIR = join(app.getPath("userData"), "..", "Allicord");
     if (settings.plugins?.NoTrack?.disableStackDumping !== false) process.env.ELECTRON_ENABLE_STACK_DUMPING = "true";
 } else {
     console.log("[Equicord] Running in vanilla mode. Not loading Equicord");

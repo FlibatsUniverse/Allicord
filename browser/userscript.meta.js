@@ -2,7 +2,7 @@
 // @name            Allicord
 // @description     A Discord client mod - Web version
 // @version         %version%
-// @author          Alliance (https://github.com/FlibatsUniverse)
+// @author          ItzFlibat (https://github.com/ItzFlibat)
 // @namespace       https://github.com/FlibatsUniverse/Allicord
 // @supportURL      https://github.com/FlibatsUniverse/Allicord/issues
 // @icon            https://raw.githubusercontent.com/FlibatsUniverse/Allicord/dev/assets/alliance.svg

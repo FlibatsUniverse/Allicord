@@ -28,11 +28,11 @@ func init() {
 		Log.Debug("Using EQUICORD_USER_DATA_DIR")
 		BaseDir = dir
 	} else if dir = os.Getenv("DISCORD_USER_DATA_DIR"); dir != "" {
-		Log.Debug("Using DISCORD_USER_DATA_DIR/../EquicordData")
-		BaseDir = path.Join(dir, "..", "EquicordData")
+		Log.Debug("Using DISCORD_USER_DATA_DIR/../AllicordData")
+		BaseDir = path.Join(dir, "..", "AllicordData")
 	} else {
 		Log.Debug("Using UserConfig")
-		BaseDir = appdir.New("Equicord").UserConfig()
+		BaseDir = appdir.New("Allicord").UserConfig()
 	}
 	dir := os.Getenv("EQUICORD_DIRECTORY")
 	if dir == "" {
@@ -49,7 +49,7 @@ func init() {
 		Log.Debug("Using EQUICORD_DIRECTORY")
 		EquicordDirectory = dir
 	} else {
-		EquicordDirectory = path.Join(BaseDir, "equicord.asar")
+		EquicordDirectory = path.Join(BaseDir, "allicord.asar")
 	}
 }
 
@@ -58,6 +58,7 @@ type DiscordInstall struct {
 	branch           string // canary / stable / ...
 	appPath          string // List of app folder to patch
 	isPatched        bool
+	installedProduct string
 	isFlatpak        bool
 	isSystemElectron bool // Needs special care https://aur.archlinux.org/packages/discord_arch_electron
 	isOpenAsar       *bool
@@ -141,6 +142,7 @@ func (di *DiscordInstall) patch() error {
 
 	Log.Info("Successfully patched", di.path)
 	di.isPatched = true
+	di.installedProduct = "Allicord"
 
 	if di.isFlatpak {
 		pathElements := strings.Split(di.path, "/")
@@ -309,6 +311,7 @@ func (di *DiscordInstall) unpatch() error {
 
 	Log.Info("Successfully unpatched", di.path)
 	di.isPatched = false
+	di.installedProduct = ""
 	return nil
 }
 

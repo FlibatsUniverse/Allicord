@@ -49,7 +49,7 @@ func GetInstallerDownloadLink() string {
 	const BaseUrl = "https://github.com/FlibatsUniverse/Allicord/releases/latest/download/"
 	switch runtime.GOOS {
 	case "windows":
-		filename := Ternary(buildinfo.UiType == buildinfo.UiTypeCli, "AllicordInstaller", "AllicordInstaller")
+		filename := Ternary(buildinfo.UiType == buildinfo.UiTypeCli, "AllicordInstallerCli", "AllicordInstaller")
 		if runtime.GOARCH == "arm64" {
 			filename += "-arm64"
 		}

@@ -76,7 +76,7 @@ jobs:
           version=$(node -p 'require("../package.json").version')
           tag="v$version+build.$BUILD_NUMBER"
           flags="-s -w -X equilotl/buildinfo.InstallerGitHash=$SOURCE_SHA -X equilotl/buildinfo.InstallerTag=$tag"
-          for target in windows:amd64:AllicordInstaller.exe windows:arm64:AllicordInstaller-arm64.exe linux:amd64:AllicordInstaller-linux-x64 linux:arm64:AllicordInstaller-linux-arm64 darwin:amd64:AllicordInstaller-macos-x64 darwin:arm64:AllicordInstaller-macos-arm64; do
+          for target in windows:amd64:AllicordInstallerCli.exe windows:arm64:AllicordInstallerCli-arm64.exe linux:amd64:AllicordInstaller-linux-x64 linux:arm64:AllicordInstaller-linux-arm64 darwin:amd64:AllicordInstaller-macos-x64 darwin:arm64:AllicordInstaller-macos-arm64; do
             IFS=: read -r os arch name <<< "$target"
             GOOS="$os" GOARCH="$arch" go build -mod=readonly -trimpath -tags cli -ldflags "$flags" -o "../dist/installers/$name" .
           done
@@ -87,4 +87,39 @@ jobs:
         with:
           name: Allicord-installers-${{ github.sha }}
           path: dist/installers/
+          if-no-files-found: error
+
+  installer-gui:
+    name: Build Windows graphical installer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: '1.26.2'
+          cache-dependency-path: installer/go.sum
+      - name: Install Windows cross compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
+      - name: Build graphical installer
+        working-directory: installer
+        env:
+          CGO_ENABLED: '1'
+          GOOS: windows
+          GOARCH: amd64
+          CC: x86_64-w64-mingw32-gcc-posix
+          CXX: x86_64-w64-mingw32-g++-posix
+          SOURCE_SHA: ${{ github.sha }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          mkdir -p ../dist/gui
+          version=$(node -p 'require("../package.json").version')
+          go build -mod=readonly -trimpath -tags 'static gui' -ldflags "-s -w -H=windowsgui -extldflags=-static -X equilotl/buildinfo.InstallerGitHash=$SOURCE_SHA -X equilotl/buildinfo.InstallerTag=v$version+build.$BUILD_NUMBER" -o ../dist/gui/AllicordInstaller.exe .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Allicord-gui-${{ github.sha }}
+          path: dist/gui/
           if-no-files-found: error

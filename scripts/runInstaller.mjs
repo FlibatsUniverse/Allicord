@@ -39,8 +39,8 @@ function getFilename() {
     switch (process.platform) {
         case "win32":
             return byArch({
-                arm64: "AllicordInstaller-arm64.exe",
-                default: "AllicordInstaller.exe"
+                arm64: "AllicordInstallerCli-arm64.exe",
+                default: "AllicordInstallerCli.exe"
             });
         case "darwin":
             return byArch({
