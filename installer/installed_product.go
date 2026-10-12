@@ -15,7 +15,18 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 )
+
+func readScriptPrefix(filename string) []byte {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil
+	}
+	defer file.Close()
+	data, _ := io.ReadAll(io.LimitReader(file, 16384))
+	return data
+}
 
 func readAsarPrefix(filename, entry string) []byte {
 	file, err := os.Open(filename)
@@ -66,6 +77,9 @@ func readAsarPrefix(filename, entry string) []byte {
 
 func detectInstalledProduct(loader string) string {
 	script := readAsarPrefix(loader, "index.js")
+	if info, err := os.Stat(loader); err == nil && info.IsDir() {
+		script = readScriptPrefix(filepath.Join(loader, "index.js"))
+	}
 	match := regexp.MustCompile(`require\(("(?:\\.|[^"\\])*")\)`).FindSubmatch(script)
 	if match == nil {
 		return "Another client modification"
@@ -80,14 +94,15 @@ func detectInstalledProduct(loader string) string {
 	var banner []byte
 	if info, err := os.Stat(target); err == nil && info.IsDir() {
 		for _, entry := range []string{"patcher.js", "main.js"} {
-			file, err := os.Open(filepath.Join(target, entry))
-			if err != nil {
-				continue
+			banner = readScriptPrefix(filepath.Join(target, entry))
+			if len(banner) > 0 {
+				break
 			}
-			banner, _ = io.ReadAll(io.LimitReader(file, 16384))
-			file.Close()
-			break
 		}
+	} else if virtual := strings.Index(strings.ToLower(filepath.ToSlash(target)), ".asar/"); virtual >= 0 {
+		banner = readAsarPrefix(target[:virtual+5], filepath.ToSlash(target[virtual+6:]))
+	} else if strings.EqualFold(filepath.Ext(target), ".js") {
+		banner = readScriptPrefix(target)
 	} else {
 		banner = readAsarPrefix(target, "patcher.js")
 		if len(banner) == 0 {
@@ -115,7 +130,11 @@ func (di *DiscordInstall) installedLabel() string {
 		if di.isSystemElectron {
 			directory = di.path
 		}
-		di.installedProduct = detectInstalledProduct(filepath.Join(directory, "app.asar"))
+		loader := filepath.Join(directory, "app.asar")
+		if info, err := os.Stat(filepath.Join(directory, "app", "index.js")); err == nil && !info.IsDir() {
+			loader = filepath.Join(directory, "app")
+		}
+		di.installedProduct = detectInstalledProduct(loader)
 	}
 	return di.installedProduct + " Installed"
 }

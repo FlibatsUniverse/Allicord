@@ -146,6 +146,34 @@ func TestDetectInstalledProduct(t *testing.T) {
 			if got := detectInstalledProduct(loader); got != product {
 				t.Fatalf("Detected %q, expected %q", got, product)
 			}
+			shim := filepath.Join(directory, "shim")
+			if err := os.Mkdir(shim, 0755); err != nil {
+				t.Fatal(err)
+			}
+			virtualTarget, err := json.Marshal(filepath.Join(client, "patcher.js"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(shim, "index.js"), []byte("require("+string(virtualTarget)+");"), 0644); err != nil {
+				t.Fatal(err)
+			}
+			if got := detectInstalledProduct(shim); got != product {
+				t.Fatalf("Folder shim detected %q, expected %q", got, product)
+			}
+			plain := filepath.Join(directory, "patcher.js")
+			if err := os.WriteFile(plain, payload, 0644); err != nil {
+				t.Fatal(err)
+			}
+			plainTarget, err := json.Marshal(plain)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(shim, "index.js"), []byte("require("+string(plainTarget)+");"), 0644); err != nil {
+				t.Fatal(err)
+			}
+			if got := detectInstalledProduct(shim); got != product {
+				t.Fatalf("Direct script detected %q, expected %q", got, product)
+			}
 			installation := DiscordInstall{isPatched: true, appPath: filepath.Join(directory, "app")}
 			if label := installation.installedLabel(); label != product+" Installed" {
 				t.Fatalf("Incorrect label: %s", label)
