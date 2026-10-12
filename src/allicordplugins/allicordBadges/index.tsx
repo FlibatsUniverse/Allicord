@@ -6,14 +6,19 @@
 
 import { addProfileBadge, BadgePosition, ProfileBadge, removeProfileBadge } from "@api/Badges";
 import { definePluginSettings } from "@api/Settings";
+import { openContributorModal } from "@components/settings";
 import BadgeAPI from "@plugins/_api/badges";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
+import { UserStore } from "@webpack/common";
+
+import { AllicordDonorModal, BotModal, UniverseModal } from "./modals";
 
 interface UserBadge {
     tooltip: string;
     mod: string;
     badge: string;
+    kind?: string;
 }
 
 const services = [
@@ -72,6 +77,22 @@ async function loadBadges() {
     users = data.users;
 }
 
+// What clicking an Allicord badge opens.
+function openBadge(kind: string | undefined, userId: string) {
+    const origin = new URL(settings.store.apiUrl).origin;
+    switch (kind) {
+        case "contributor":
+        case "developer": {
+            const user = UserStore.getUser(userId);
+            if (user) openContributorModal(user);
+            break;
+        }
+        case "universe": return UniverseModal(origin);
+        case "bot": return BotModal(origin);
+        case "donor": return AllicordDonorModal(origin);
+    }
+}
+
 const badge: ProfileBadge = {
     id: "allicord_badges",
     getBadges({ userId }) {
@@ -87,7 +108,8 @@ const badge: ProfileBadge = {
                 iconSrc: b.badge,
                 description: b.tooltip,
                 position: BadgePosition.START,
-                props: { style: { borderRadius: "50%", transform: "scale(0.9)" } }
+                props: { style: { borderRadius: "50%", transform: "scale(0.9)" } },
+                onClick: b.kind ? () => openBadge(b.kind, userId) : undefined
             }));
     }
 };
