@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: [Sync Upstream]
     types: [completed]
-    branches: [dev]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   integrate:
-    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/dev' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     outputs:
       state: ${{ steps.merge.outputs.state }}
@@ -28,10 +28,10 @@ jobs:
       - id: merge
         name: Prepare integration
         run: |
-          git fetch origin main dev
-          echo "main=$(git rev-parse origin/main)" >> "$GITHUB_OUTPUT"
+          git fetch origin upstream dev
+          echo "main=$(git rev-parse origin/upstream)" >> "$GITHUB_OUTPUT"
           echo "dev=$(git rev-parse origin/dev)" >> "$GITHUB_OUTPUT"
-          if git merge-base --is-ancestor origin/main origin/dev; then
+          if git merge-base --is-ancestor origin/upstream origin/dev; then
             echo 'state=current' >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -41,7 +41,7 @@ jobs:
             git fetch origin allicord/upstream-sync
             git checkout --detach FETCH_HEAD
           fi
-          if git merge --no-ff origin/dev -m 'chore(sync): incorporate current Allicord development' && git merge --no-ff origin/main -m 'chore(sync): merge Equicord upstream'; then
+          if git merge --no-ff origin/dev -m 'chore(sync): incorporate current Allicord development' && git merge --no-ff origin/upstream -m 'chore(sync): merge Equicord upstream'; then
             echo 'state=merged' >> "$GITHUB_OUTPUT"
           else
             git diff --name-only --diff-filter=U > conflict-files.txt
@@ -109,8 +109,8 @@ jobs:
           MERGE_SHA: ${{ needs.integrate.outputs.commit }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          git fetch origin main dev
-          [ "$(git rev-parse origin/main)" = "$MAIN_SHA" ] && [ "$(git rev-parse origin/dev)" = "$DEV_SHA" ] || { echo 'Branches changed during validation; rerun synchronization'; exit 1; }
+          git fetch origin upstream dev
+          [ "$(git rev-parse origin/upstream)" = "$MAIN_SHA" ] && [ "$(git rev-parse origin/dev)" = "$DEV_SHA" ] || { echo 'Branches changed during validation; rerun synchronization'; exit 1; }
           issue=$(gh issue list --state open --search '"Upstream synchronization conflict" in:title' --json number --jq '.[0].number // empty')
           if [ "$STATE" = conflict ]; then
             { printf 'Upstream merge failed at main %s and dev %s.\n\nConflicting files:\n' "$MAIN_SHA" "$DEV_SHA"; cat conflict-files.txt; printf '\nRun: %s\n' "$RUN_URL"; } > report.md
@@ -120,7 +120,7 @@ jobs:
           git fetch ./integration.bundle HEAD
           [ "$(git rev-parse FETCH_HEAD)" = "$MERGE_SHA" ] || exit 1
           git merge-base --is-ancestor origin/dev "$MERGE_SHA"
-          git merge-base --is-ancestor origin/main "$MERGE_SHA"
+          git merge-base --is-ancestor origin/upstream "$MERGE_SHA"
           branch='allicord/upstream-sync'
           if git ls-remote --exit-code origin "refs/heads/$branch" >/dev/null; then
             git fetch origin "$branch"

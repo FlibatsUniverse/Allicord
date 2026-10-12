@@ -44,7 +44,7 @@ async function listUpdates() {
     const isOutdated = await fetchUpdate();
     if (!isOutdated) return [];
 
-    const data = await githubGet(`/compare/${gitHash}...prod`);
+    const data = await githubGet(`/compare/${gitHash}...main`);
 
     return data.commits.map((c: any) => ({
         hash: c.sha,

@@ -2,19 +2,44 @@
 
 <img src="assets/alliance.svg" width="96" alt="Alliance logo">
 
-Allicord is an enhanced Discord client modification by Alliance, built on Equicord.
+Allicord is an enhanced Discord client modification by Alliance, built on [Equicord](https://github.com/Equicord/Equicord) and [Vencord](https://github.com/Vendicated/Vencord).
 
-Developed by the [Alliance team](https://github.com/FlibatsUniverse), Allicord inherits Equicord and Vencord plugins, themes, settings and customization while keeping Alliance development isolated. [AllianceBot](https://github.com/FlibatsUniverse/AllianceBot) is the companion Discord bot project.
+[![Build](https://github.com/FlibatsUniverse/Allicord/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/FlibatsUniverse/Allicord/actions/workflows/build.yml)
+[Latest release](https://github.com/FlibatsUniverse/Allicord/releases/latest) · [Alliance projects](https://github.com/FlibatsUniverse) · [AllianceBot](https://github.com/FlibatsUniverse/AllianceBot)
 
-## Installation and platforms
+## Installing, repairing and uninstalling
 
-No dedicated Allicord installer is validated or published yet. Do not use Equicord's installer expecting it to download Allicord. The source installer remains Equilotl and requires an explicit ALLICORD_USE_UPSTREAM_INSTALLER=1 opt-in for advanced local development; installation, updates and uninstallation are unverified.
+Download the installer for your platform. These are unsigned **terminal installers** adapted from Equilotl. Windows users can double-click the .exe, select their Discord installation, and choose Install, Repair or Uninstall. Close Discord before making changes, then restart it afterward. Installation and uninstallation are tested with simulated Discord files; live Discord and cross-platform runtime validation remain ongoing.
 
-Upstream targets Windows, macOS and Linux. Allicord builds universal JavaScript/ASAR bundles and browser extensions, not six native executable installers. Platform support is inherited in design and needs runtime validation. Download only verified assets from [Allicord releases](https://github.com/FlibatsUniverse/Allicord/releases).
+| Platform | x64 | ARM64 |
+| --- | --- | --- |
+| Windows | [Download .exe](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller.exe) | [Download .exe](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-arm64.exe) |
+| macOS | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-macos-arm64) |
+| Linux | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-x64) | [Download](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/AllicordInstaller-linux-arm64) |
 
-## Build from source
+On macOS/Linux, run chmod +x on the downloaded file and launch it from your terminal. --help lists options, including --install, --repair and --uninstall. The installer downloads Allicord's own client bundle and verifies its SHA-256 checksum before replacing an existing build. Shared Equicord data paths remain for compatibility; replace the existing modification instead of installing both into one Discord instance.
 
-Use Node.js 24 and the exact pnpm version in package.json (12.8.1). Enable Corepack or install that version, then:
+## Browser and client downloads
+
+| Download | Link |
+| --- | --- |
+| Chromium extension | [ZIP](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-extension-chrome.zip) |
+| Firefox extension | [ZIP](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-extension-firefox.zip) |
+| Userscript | [Allicord.user.js](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord.user.js) |
+| Desktop client bundle | [ASAR](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-desktop.asar) |
+| Equibop client bundle | [ASAR](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-equibop.asar) |
+| Source code | [Archive](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-source.tar.gz) |
+| Checksums | [SHA256SUMS](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/SHA256SUMS) |
+
+Load the Chromium ZIP unpacked through your browser's extension developer mode. Firefox unsigned extensions require a browser edition/configuration that supports them. ASAR downloads are client bundles; use the installer to patch Discord. All links refer to this repository's latest successfully validated release.
+
+## Automatic releases
+
+main contains stable Allicord code and is the default branch. Every main push is validated, then automatically published with its client bundles and six terminal installers. Failed builds are not released. Release tags use the package's semantic version with unique build metadata, for example v0.1.0+build.12, and retain their exact source commit. dev is the development branch; upstream is the clean Equicord mirror synchronized every six hours. See [UPSTREAM.md](UPSTREAM.md).
+
+## Build and contribute
+
+Use Node.js 24 and pnpm 12.8.1:
 
 ```sh
 git clone https://github.com/FlibatsUniverse/Allicord.git
@@ -27,14 +52,10 @@ pnpm buildStandalone
 pnpm buildWebStandalone
 ```
 
-Outputs are in dist/. Internal Vencord globals, Equicord extension payload filenames, protocol names and data directories are retained for compatibility. Allicord release ASAR assets and userscripts use Allicord names. No candidate Alliance domain is treated as a live website.
-
-## Development
-
-Add plugins under src/allicordplugins/; see [plugin development](src/allicordplugins/README.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Use Conventional Commits. main is an upstream mirror, dev is Allicord integration, and prod is stable promotion after validation. See [ARCHITECTURE.md](ARCHITECTURE.md) and [UPSTREAM.md](UPSTREAM.md).
+Outputs are in dist/. To build the terminal installer, use Go 1.26.2 in installer/ with go build -mod=readonly -tags cli . Custom Alliance plugins live under src/allicordplugins/. See [CONTRIBUTING.md](CONTRIBUTING.md), the [plugin guide](src/allicordplugins/README.md), and [ARCHITECTURE.md](ARCHITECTURE.md). Use Conventional Commits.
 
 ## Attribution and license
 
-Built on [Equicord](https://github.com/Equicord/Equicord), originally [Vencord](https://github.com/Vendicated/Vencord) by Vendicated and contributors. Suncord contributed to Equicord's history. Original copyright notices, contributor badges and upstream plugin identity remain intact. Distributed under [GPL-3.0-or-later](LICENSE); redistributed dependency notices accompany builds. Alliance artwork was supplied from AllianceBot.
+Built on Equicord, originally Vencord by Vendicated and contributors, with Suncord contributing to Equicord's history. The terminal installer is adapted from [Equilotl](https://github.com/Equicord/Equilotl), originally the Vencord Installer. Original notices and contributor identities are retained. See [LICENSE](LICENSE), [installer attribution](installer/README.md), and the dependency notices supplied with releases. Alliance artwork was supplied from AllianceBot.
 
 Allicord is not affiliated with or endorsed by Discord. Client modifications are unsupported by Discord and may carry compatibility or account risks.

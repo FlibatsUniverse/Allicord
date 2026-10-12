@@ -1,11 +1,15 @@
 # Architecture
 
-Allicord is a native GitHub fork of Equicord, with Vencord as the root source. Upstream TypeScript APIs, renderer globals, plugin directories, protocols and data formats stay compatible. The GPL license and inherited notices remain unchanged.
+Allicord is a genuine GitHub fork of Equicord, with Vencord as the root source. Upstream APIs, renderer globals, plugin directories, protocols and settings formats remain compatible. Copyright notices and GPL licensing are preserved.
 
-Alliance additions live under src/allicordplugins and assets/. Plugin discovery, native companions and catalog generation include that directory. Allicord uses the existing PluginManager and Settings system. Upstream contributor badges and cloud service identities continue to identify their actual providers.
+Alliance plugins live in src/allicordplugins/, with renderer discovery, native companions and combined plugin catalog integration. They use the existing PluginManager and Settings APIs. Original Equicord/Vencord plugin and contributor identities remain intact.
 
-The build pipeline uses Node 24, pinned pnpm and the frozen lockfile. CI validates types, lint, patch patterns, catalogs and standalone desktop/browser builds. Build artifacts are universal bundles; no native installer platform matrix is claimed. Existing upstream workflow files are retained with .upstream suffix for reference and are not active on dev.
+main is stable Allicord and the default branch. dev is development and upstream is the clean Equicord mirror. prod is a retained historical reference. Every push to main/dev runs client validation and installer tests/builds. Only successful main push runs can trigger automatic stable publication.
 
-Release is manual from prod, checks the SemVer tag against package.json, creates an immutable tag at the validated commit and attaches Allicord-named ASARs, browser bundles and checksums. Development builds use separate prerelease tags. The HTTP updater derives the repository from the build's git remote, selects Allicord-named ASAR assets, and expects the release name to end in the full source SHA. Source builds continue using the inherited git updater. No release is published during setup.
+Client builds use Node 24, pnpm 12.8.1 and the frozen lockfile. The terminal installer source in installer/ is adapted from a pinned Equilotl commit under GPL, with Go 1.26.2 and a locked module graph. Six CGO-free CLI binaries are cross-compiled for Windows, macOS and Linux x64/ARM64. Tests check temporary-file installation/uninstallation and valid/invalid downloaded client checksums. Cross-compilation does not establish live platform compatibility.
 
-The installer is external Equicord/Equilotl. Allicord requires a dedicated installer fork and runtime testing before general installation instructions can be advertised. No additional repository is created by this change.
+release.yml uses workflow_run from Allicord Build on main, restricts the source to successful trusted push runs, and downloads artifacts from that exact run. A read-only packaging job collects notices, source archives and SHA-256 checksums. A separate write job verifies checksums and publishes an immutable source tag with SemVer build metadata. Repeated publication of the same tag is skipped. Older queued builds do not replace the latest release pointer.
+
+The client HTTP updater derives the repository from its build remote and selects Allicord-named ASARs. Release names end in the full source SHA. The installer and its self-updater use the same Allicord release repository. Client downloads are checksum-verified before replacing an existing ASAR. Equicord environment variables and data paths remain for loader compatibility. Installation into a real Discord client is still subject to runtime validation.
+
+prerelease.yml remains an optional manual development build, separate from stable main releases. Private security reporting and branch/tag protection settings remain maintainer responsibilities.

@@ -2,7 +2,7 @@
 
 ## Branches and pull requests
 
-main mirrors Equicord/Equicord:main without Allicord commits. Create feature branches from dev and target dev. prod receives reviewed promotions from dev after CI passes. Never force-push main, dev or prod, and never rewrite inherited history. Stable releases require an approved manual release run from prod.
+main is the stable Allicord branch. upstream mirrors Equicord/Equicord:main without Allicord commits. Create feature branches from dev and target dev, then promote validated changes into main. Never force-push main, dev or upstream, and never rewrite inherited history. Every main push is automatically released only after the full Allicord Build workflow succeeds.
 
 ## Conventional Commits
 
@@ -27,7 +27,7 @@ Install with pnpm install --frozen-lockfile using Node 24 and packageManager fro
 
 ## Upstream synchronization
 
-Every six hours, synchronization fast-forwards main. A second workflow merges main into a temporary branch, validates it without write credentials, then opens or updates one PR to dev. Merge conflicts leave dev unchanged and update a tracking issue. Resolve conflicts on an integration branch, preserve Alliance changes and upstream attribution, run all checks, and merge with history preserved. See [UPSTREAM.md](UPSTREAM.md).
+Every six hours, synchronization fast-forwards upstream. A second workflow merges upstream into a temporary branch, validates it without write credentials, then opens or updates one PR to dev. Merge conflicts leave dev unchanged and update a tracking issue. Resolve conflicts on an integration branch, preserve Alliance changes and upstream attribution, run all checks, and merge with history preserved. See [UPSTREAM.md](UPSTREAM.md).
 
 ## AI assistance
 

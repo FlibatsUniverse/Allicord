@@ -25,10 +25,7 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { fileURLToPath } from "url";
 
-if (!process.env.ALLICORD_USE_UPSTREAM_INSTALLER)
-    throw new Error("Allicord has no validated dedicated installer yet. See README.md. Set ALLICORD_USE_UPSTREAM_INSTALLER=1 only to explicitly use the upstream Equilotl source installer.");
-
-const BASE_URL = "https://github.com/Equicord/Equilotl/releases/latest/download/";
+const BASE_URL = "https://github.com/FlibatsUniverse/Allicord/releases/latest/download/";
 
 const BASE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
 const FILE_DIR = join(BASE_DIR, "dist", "Installer");
@@ -42,19 +39,19 @@ function getFilename() {
     switch (process.platform) {
         case "win32":
             return byArch({
-                arm64: "EquilotlCli-arm64.exe",
-                default: "EquilotlCli.exe"
+                arm64: "AllicordInstaller-arm64.exe",
+                default: "AllicordInstaller.exe"
             });
         case "darwin":
             return byArch({
-                x64: "EquilotlCli-x64",
-                arm64: "EquilotlCli-arm64",
-                default: "EquilotlCli-universal"
+                x64: "AllicordInstaller-macos-x64",
+                arm64: "AllicordInstaller-macos-arm64",
+                default: "AllicordInstaller-macos-arm64"
             });
         case "linux":
             return byArch({
-                arm64: "EquilotlCli-linux-arm64",
-                default: "EquilotlCli-Linux"
+                arm64: "AllicordInstaller-linux-arm64",
+                default: "AllicordInstaller-linux-x64"
             });
         default:
             throw new Error("Unsupported platform: " + process.platform);
@@ -74,7 +71,7 @@ async function ensureBinary() {
 
     const res = await fetch(BASE_URL + filename, {
         headers: {
-            "User-Agent": "Equicord (https://github.com/Equicord/Equicord)",
+            "User-Agent": "Allicord (https://github.com/FlibatsUniverse/Allicord)",
             "If-None-Match": etag
         }
     });
@@ -120,4 +117,5 @@ try {
     });
 } catch {
     console.error("Something went wrong. Please check the logs above.");
+    process.exitCode = 1;
 }

@@ -1,9 +1,9 @@
 name: Allicord Build
 on:
   push:
-    branches: [dev, prod]
+    branches: [dev, main]
   pull_request:
-    branches: [dev, prod]
+    branches: [dev, main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -39,8 +39,50 @@ jobs:
           pnpm generatePluginJson > /dev/null
           pnpm buildStandalone
           pnpm buildWebStandalone
+          pnpm generatePluginJson dist/plugins.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Allicord-${{ github.sha }}
           path: dist/
+          if-no-files-found: error
+
+  installer:
+    name: Build installers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: '1.26.2'
+          cache-dependency-path: installer/go.sum
+      - name: Test installer
+        working-directory: installer
+        env:
+          EQUICORD_USER_DATA_DIR: ${{ runner.temp }}
+          EQUICORD_DIRECTORY: ${{ runner.temp }}/allicord-test.asar
+        run: go test -mod=readonly -tags cli ./...
+      - name: Build all terminal installers
+        working-directory: installer
+        env:
+          CGO_ENABLED: '0'
+          SOURCE_SHA: ${{ github.sha }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          mkdir -p ../dist/installers
+          version=$(node -p 'require("../package.json").version')
+          tag="v$version+build.$BUILD_NUMBER"
+          flags="-s -w -X equilotl/buildinfo.InstallerGitHash=$SOURCE_SHA -X equilotl/buildinfo.InstallerTag=$tag"
+          for target in windows:amd64:AllicordInstaller.exe windows:arm64:AllicordInstaller-arm64.exe linux:amd64:AllicordInstaller-linux-x64 linux:arm64:AllicordInstaller-linux-arm64 darwin:amd64:AllicordInstaller-macos-x64 darwin:arm64:AllicordInstaller-macos-arm64; do
+            IFS=: read -r os arch name <<< "$target"
+            GOOS="$os" GOARCH="$arch" go build -mod=readonly -trimpath -tags cli -ldflags "$flags" -o "../dist/installers/$name" .
+          done
+          go mod download -json > ../dist/installers/modules.json
+          node ../scripts/collectInstallerLicenses.mjs ../dist/installers
+          EQUICORD_USER_DATA_DIR="$RUNNER_TEMP" EQUICORD_DIRECTORY="$RUNNER_TEMP/allicord-smoke.asar" ../dist/installers/AllicordInstaller-linux-x64 --version
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Allicord-installers-${{ github.sha }}
+          path: dist/installers/
           if-no-files-found: error

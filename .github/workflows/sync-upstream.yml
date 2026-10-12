@@ -10,20 +10,20 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sync:
-    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/dev'
+    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: main
+          ref: upstream
           fetch-depth: 0
       - name: Fast-forward upstream mirror
         run: |
           git fetch https://github.com/Equicord/Equicord.git main
-          git merge-base --is-ancestor HEAD FETCH_HEAD || { echo 'main diverged from Equicord; refusing to overwrite history'; exit 1; }
+          git merge-base --is-ancestor HEAD FETCH_HEAD || { echo 'upstream mirror diverged from Equicord; refusing to overwrite history'; exit 1; }
           if [ "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" ]; then
-            echo 'main already matches upstream'
+            echo 'upstream mirror already matches upstream'
             exit 0
           fi
           git merge --ff-only FETCH_HEAD
-          git push origin HEAD:main
+          git push origin HEAD:upstream
