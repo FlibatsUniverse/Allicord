@@ -19,6 +19,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Fix build timestamp to source commit
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'

@@ -23,5 +23,7 @@ for (const module of modules) {
 }
 mkdirSync(join(output, "licenses"), { recursive: true });
 copyFileSync("LICENSE", join(output, "licenses", "Installer-LICENSE"));
+copyFileSync("GO-LICENSE", join(output, "licenses", "Go-LICENSE"));
+copyFileSync("GO-PATENTS", join(output, "licenses", "Go-PATENTS"));
 writeFileSync(join(output, "licenses", "modules.json"), JSON.stringify(manifest, null, 2));
 console.log(`Collected installer license notices for ${modules.length} modules.`);
