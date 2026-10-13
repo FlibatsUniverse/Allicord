@@ -5,8 +5,10 @@
  */
 
 import { addProfileBadge, BadgePosition, ProfileBadge, removeProfileBadge } from "@api/Badges";
+import { isPluginEnabled } from "@api/PluginManager";
 import { definePluginSettings } from "@api/Settings";
 import { openContributorModal } from "@components/settings";
+import GlobalBadgesPlugin from "@equicordplugins/globalBadges";
 import BadgeAPI from "@plugins/_api/badges";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
@@ -100,9 +102,13 @@ const badge: ProfileBadge = {
             ...BadgeAPI.DonorBadges[userId] ?? [],
             ...BadgeAPI.EquicordDonorBadges[userId] ?? []
         ];
+        const global = isPluginEnabled(GlobalBadgesPlugin.name)
+            ? GlobalBadgesPlugin.getGlobalBadges(userId) ?? []
+            : [];
         const seen = new Set([
             ...donor.map(b => b.badge),
-            ...donor.map(b => b.tooltip)
+            ...donor.map(b => b.tooltip),
+            ...global.map(b => b.iconSrc)
         ]);
 
         return (users[userId] ?? [])
