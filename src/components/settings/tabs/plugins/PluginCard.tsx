@@ -105,7 +105,7 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
         },
         {
             condition: isModifiedEquicordPlugin,
-            src: SourceIcons.modified,
+            src: SourceIcons.modifiedEquicord,
             alt: "Modified",
             title: "Modified Equicord Plugin"
         },

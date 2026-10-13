@@ -5,6 +5,7 @@
  */
 
 import allicord from "file://../../../../../assets/alliance.svg?base64";
+import modifiedEquicord from "file://../../../../../assets/icons/allicord/modified-equicord.png?base64";
 import equicord from "file://../../../../../assets/icons/equicord/icon.png?base64";
 import modified from "file://../../../../../assets/icons/equicord/modified.png?base64";
 import user from "file://../../../../../assets/icons/misc/userplugin.png?base64";
@@ -15,6 +16,7 @@ export const SourceIcons = {
     allicord: `data:image/svg+xml;base64,${allicord}`,
     equicord: `data:image/png;base64,${equicord}`,
     modified: `data:image/png;base64,${modified}`,
+    modifiedEquicord: `data:image/png;base64,${modifiedEquicord}`,
     user: `data:image/png;base64,${user}`,
     vencord: `data:image/png;base64,${vencord}`
 };
