@@ -63,8 +63,7 @@ async function listUpdates() {
     return data.commits.map((c: any) => ({
         hash: c.sha,
         author: c.author?.login ?? c.commit?.author?.name ?? "Unknown Author",
-        message: c.commit.message.split("
-")[0]
+        message: c.commit.message.split("\n")[0]
     }));
 }
 
