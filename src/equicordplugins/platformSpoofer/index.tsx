@@ -7,7 +7,7 @@
 import { definePluginSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Notice } from "@components/Notice";
-import { EquicordDevs } from "@utils/constants";
+import { AllicordDevs, EquicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { findComponentByCodeLazy } from "@webpack";
 import { Menu, showToast, UserStore } from "@webpack/common";
@@ -69,7 +69,8 @@ function PlatformIcon({ platform, ...props }: { platform: string; className?: st
 }
 
 function PlatformEntry() {
-    const { platform } = settings.use(["platform"]);
+    const { platform, showInStatusMenu } = settings.use(["platform", "showInStatusMenu"]);
+    if (!showInStatusMenu) return null;
 
     return (
         <PlatformMenuItem
@@ -105,6 +106,11 @@ function PlatformSubMenu() {
 }
 
 const settings = definePluginSettings({
+    showInStatusMenu: {
+        type: OptionType.BOOLEAN,
+        description: "Show the platform switcher in the account panel's status menu",
+        default: true
+    },
     platform: {
         type: OptionType.SELECT,
         description: "What platform to show up as on",
@@ -148,7 +154,7 @@ export default definePlugin({
     isModifiedEquicord: true,
     description: "Spoof what platform or device you're on",
     tags: ["Utility"],
-    authors: [EquicordDevs.Drag, EquicordDevs.neoarz],
+    authors: [EquicordDevs.Drag, EquicordDevs.neoarz, AllicordDevs.Flibat],
     settingsAboutComponent: () => (
         <Notice.Warning>
             We can't guarantee this plugin won't get you warned or banned.
