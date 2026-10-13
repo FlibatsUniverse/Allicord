@@ -39,6 +39,7 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
     const isVencordPlugin = pluginMeta.folderName.startsWith("src/plugins/") ?? false;
     const isUserPlugin = pluginMeta?.userPlugin ?? false;
     const isModifiedPlugin = plugin.isModified ?? false;
+    const isModifiedEquicordPlugin = plugin.isModifiedEquicord ?? false;
 
     const isEnabled = () => isPluginEnabled(plugin.name);
 
@@ -96,6 +97,12 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
             src: SourceIcons.modified,
             alt: "Modified",
             title: "Modified Vencord Plugin"
+        },
+        {
+            condition: isModifiedEquicordPlugin,
+            src: SourceIcons.modified,
+            alt: "Modified",
+            title: "Modified Equicord Plugin"
         },
         {
             condition: isAllicordPlugin,

@@ -51,6 +51,7 @@ export interface PluginData {
     filePath: string;
     dirName: string;
     isModified: boolean;
+    isModifiedEquicord: boolean;
 }
 
 export const devs = {} as Record<string, Dev>;
@@ -154,6 +155,7 @@ export async function parseFile(fileName: string) {
             enabledByDefault: false,
             required: false,
             isModified: false,
+            isModifiedEquicord: false,
             tags: [] as string[],
             searchTerms: [] as string[],
         } as PluginData;
@@ -226,6 +228,7 @@ export async function parseFile(fileName: string) {
                     break;
                 case "required":
                 case "isModified":
+                case "isModifiedEquicord":
                 case "enabledByDefault":
                     data[key] = value.kind === SyntaxKind.TrueKeyword;
                     break;
