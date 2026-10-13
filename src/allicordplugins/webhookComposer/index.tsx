@@ -48,6 +48,7 @@ function addSendButton(copyButton: HTMLElement) {
     const send = copyButton.cloneNode(true) as HTMLElement;
     send.setAttribute(MARKER, "");
     send.removeAttribute("id");
+    send.style.marginLeft = "8px";
     setLabel(send, SEND_LABEL);
 
     send.addEventListener("click", e => {

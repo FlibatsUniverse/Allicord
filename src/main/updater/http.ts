@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { RendererSettings } from "@main/settings";
 import { fetchBuffer, fetchJson } from "@main/utils/http";
 import { VENCORD_USER_AGENT } from "@shared/vencordUserAgent";
 import { writeFileSync } from "original-fs";
@@ -28,6 +29,7 @@ import { ASAR_FILE } from "./common";
 
 const API_BASE = `https://api.github.com/repos/${gitRemote}`;
 let PendingUpdate: string | null = null;
+let PendingHash: string | null = null;
 
 async function githubGet<T = any>(endpoint: string) {
     return fetchJson<T>(API_BASE + endpoint, {
@@ -40,21 +42,34 @@ async function githubGet<T = any>(endpoint: string) {
     });
 }
 
+// Stable is the latest full release. dev and dev2 are the latest prerelease published from each branch
+async function getRelease() {
+    const { updateChannel } = RendererSettings.store;
+    if (updateChannel !== "dev" && updateChannel !== "dev2") return githubGet("/releases/latest");
+
+    const releases = await githubGet<any[]>("/releases?per_page=50");
+    const release = releases.find(r => r.prerelease && !r.draft && r.tag_name.includes(`-${updateChannel}.`));
+    if (!release) throw new Error(`There is no ${updateChannel} build yet.`);
+
+    return release;
+}
+
 async function listUpdates() {
     const isOutdated = await fetchUpdate();
     if (!isOutdated) return [];
 
-    const data = await githubGet(`/compare/${gitHash}...main`);
+    const data = await githubGet(`/compare/${gitHash}...${PendingHash}`);
 
     return data.commits.map((c: any) => ({
         hash: c.sha,
         author: c.author?.login ?? c.commit?.author?.name ?? "Unknown Author",
-        message: c.commit.message.split("\n")[0]
+        message: c.commit.message.split("
+")[0]
     }));
 }
 
 async function fetchUpdate() {
-    const data = await githubGet("/releases/latest");
+    const data = await getRelease();
 
     const hash = data.name.slice(data.name.lastIndexOf(" ") + 1);
     if (hash === gitHash)
@@ -63,6 +78,7 @@ async function fetchUpdate() {
     const asset = data.assets.find(a => a.name === ASAR_FILE);
     if (!asset) throw new Error(`The Allicord release is missing ${ASAR_FILE}.`);
     PendingUpdate = asset.browser_download_url;
+    PendingHash = hash;
 
     return true;
 }
@@ -74,6 +90,7 @@ async function applyUpdate() {
     writeFileSync(__dirname, data, { flush: true });
 
     PendingUpdate = null;
+    PendingHash = null;
 
     return true;
 }

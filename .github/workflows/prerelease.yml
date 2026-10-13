@@ -9,11 +9,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: allicord-prerelease
+  group: allicord-prerelease-${{ github.ref_name }}
   cancel-in-progress: false
 jobs:
   build:
-    if: github.repository == 'FlibatsUniverse/Allicord' && github.ref == 'refs/heads/dev'
+    if: github.repository == 'FlibatsUniverse/Allicord' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/dev2')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -75,7 +75,7 @@ jobs:
         run: |
           cd release && sha256sum -c SHA256SUMS && cd ..
           version=$(node -p 'require("./package.json").version')
-          tag="v$version-dev.${{ github.run_number }}.${{ github.run_attempt }}"
+          tag="v$version-${{ github.ref_name }}.${{ github.run_number }}.${{ github.run_attempt }}"
           git tag "$tag" "$GITHUB_SHA"
           git push origin "refs/tags/$tag"
-          gh release create "$tag" release/* --verify-tag --prerelease --title "Allicord Development $GITHUB_SHA" --generate-notes
+          gh release create "$tag" release/* --verify-tag --prerelease --title "Allicord Development (${{ github.ref_name }}) $GITHUB_SHA" --generate-notes

@@ -9,6 +9,7 @@ import { ApplicationCommandInputType, sendBotMessage } from "@api/Commands";
 import { definePluginSettings } from "@api/Settings";
 import { openContributorModal } from "@components/settings";
 import BadgeAPI from "@plugins/_api/badges";
+import { setAllicordContributors } from "@utils/allicordContributors";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
 import { UserStore } from "@webpack/common";
@@ -80,6 +81,18 @@ const settings = definePluginSettings({
     } satisfies PluginSettingBooleanDef] as const))
 });
 
+// Allicord's own badges come first, then Flibat's Universe, then other client mods in the order listed above
+const kindOrder = ["developer", "contributor", "donor", "bot", "universe"];
+
+function badgeRank({ mod, kind }: UserBadge) {
+    if (mod === "allicord") {
+        const rank = kindOrder.indexOf(kind ?? "");
+        return rank === -1 ? kindOrder.length - 1 : rank;
+    }
+
+    return kindOrder.length + services.findIndex(([id]) => id === mod);
+}
+
 const DEFAULT_API_URL = "https://alliance.flibat.com/api/badges";
 
 function getApiUrl() {
@@ -94,6 +107,9 @@ async function loadBadges() {
     const base = getApiUrl().replace(/\/$/, "");
     const data = await fetch(`${base}/users`, { cache: "no-cache" }).then(r => r.json());
     users = data.users;
+    setAllicordContributors(Object.entries(users)
+        .filter(([, badges]) => badges.some(b => b.kind === "contributor" || b.kind === "developer"))
+        .map(([id]) => id));
 }
 
 // What clicking an Allicord badge opens.
@@ -122,6 +138,7 @@ const badge: ProfileBadge = {
 
         return (users[userId] ?? [])
             .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge))
+            .sort((a, b) => badgeRank(a) - badgeRank(b))
             .map((b, idx) => ({
                 id: `allicord_badges_${b.mod}_${idx}`,
                 iconSrc: b.badge,

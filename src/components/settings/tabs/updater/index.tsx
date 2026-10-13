@@ -26,10 +26,11 @@ import { Heading, HeadingSecondary } from "@components/Heading";
 import { Link } from "@components/Link";
 import { Paragraph } from "@components/Paragraph";
 import { SettingsTab, wrapTab } from "@components/settings/tabs/BaseTab";
+import { isAllicordContributor } from "@utils/allicordContributors";
 import { Margins } from "@utils/margins";
 import { useAwaiter } from "@utils/react";
 import { getRepo, isNewer, UpdateLogger } from "@utils/updater";
-import { React } from "@webpack/common";
+import { React, Select, UserStore } from "@webpack/common";
 
 import gitHash from "~git-hash";
 
@@ -68,8 +69,14 @@ function EquibopSection() {
     );
 }
 
+const channelOptions = [
+    { label: "Stable", value: "stable", default: true },
+    { label: "Development (dev)", value: "dev" },
+    { label: "Development (dev2)", value: "dev2" }
+];
+
 function Updater() {
-    const settings = useSettings(["autoUpdate", "autoUpdateNotification"]);
+    const settings = useSettings(["autoUpdate", "autoUpdateNotification", "updateChannel", "showUpdateChannel"]);
 
     const [repo, err, repoPending] = useAwaiter(getRepo, { fallbackValue: "Loading..." });
 
@@ -77,6 +84,9 @@ function Updater() {
         if (err)
             UpdateLogger.error("Failed to retrieve repo", err);
     }, [err]);
+
+    const isContributor = isAllicordContributor(UserStore.getCurrentUser()?.id);
+    const canChooseChannel = isContributor || settings.showUpdateChannel;
 
     const commonProps: CommonProps = {
         repo,
@@ -107,7 +117,32 @@ function Updater() {
                     disabled={!settings.autoUpdate}
                     hideBorder
                 />
+                <FormSwitch
+                    title="Show update channel selector"
+                    description="Lets you switch between stable and development builds. Always shown to Allicord contributors."
+                    value={settings.showUpdateChannel}
+                    onChange={(v: boolean) => settings.showUpdateChannel = v}
+                    disabled={isContributor}
+                    hideBorder
+                />
             </div>
+
+            {canChooseChannel && (
+                <>
+                    <Divider className={Margins.top20} />
+
+                    <Heading className={Margins.top20}>Update Channel</Heading>
+                    <Paragraph className={Margins.bottom16}>
+                        Stable gets tested releases. The dev and dev2 channels get changes as soon as they are built, so they can break. Restart Discord after switching, then check for updates.
+                    </Paragraph>
+                    <Select
+                        options={channelOptions}
+                        isSelected={v => v === settings.updateChannel}
+                        select={v => settings.updateChannel = v as "stable" | "dev" | "dev2"}
+                        serialize={v => v}
+                    />
+                </>
+            )}
 
             <Divider className={Margins.top20} />
 

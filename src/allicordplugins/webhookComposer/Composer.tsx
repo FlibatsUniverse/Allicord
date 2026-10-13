@@ -10,6 +10,7 @@ import { Button } from "@components/Button";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { classNameFactory } from "@utils/css";
 import { copyWithToast } from "@utils/discord";
+import type { PluginNative } from "@utils/types";
 import type { RenderModalProps } from "@vencord/discord-types";
 import { Modal, openModal, Parser, TextArea, TextInput, useMemo, useState } from "@webpack/common";
 
@@ -226,16 +227,26 @@ function Preview({ webhook, message }: { webhook: Webhook; message: WebhookMessa
     );
 }
 
+// Discord rejects webhook requests that come from the app's own origin, so they go out from the main process
 async function sendMessage(webhook: Webhook, message: WebhookMessage) {
-    const res = await fetch(`https://discord.com/api/webhooks/${webhook.id}/${webhook.token}?wait=true`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(clean(message))
-    });
+    const url = `https://discord.com/api/webhooks/${webhook.id}/${webhook.token}?wait=true`;
+    const payload = JSON.stringify(clean(message));
 
-    if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.message ?? `Discord answered with status ${res.status}`);
+    const native = IS_DISCORD_DESKTOP
+        ? VencordNative.pluginHelpers.WebhookComposer as PluginNative<typeof import("./native")>
+        : undefined;
+
+    const { status, body } = native
+        ? await native.sendWebhook(url, payload)
+        : await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload })
+            .then(async res => ({ status: res.status, body: await res.text() }));
+
+    if (status < 200 || status >= 300) {
+        let reason = "";
+        try {
+            reason = JSON.parse(body)?.message ?? "";
+        } catch { }
+        throw new Error(reason || `Discord answered with status ${status}`);
     }
 }
 
@@ -243,6 +254,7 @@ function Composer({ webhook, modalProps }: { webhook: Webhook; modalProps: Rende
     const [message, setMessage] = useState<WebhookMessage>({ content: "", embeds: [] });
     const [status, setStatus] = useState<{ ok: boolean; text: string; } | null>(null);
     const [sending, setSending] = useState(false);
+    const [importText, setImportText] = useState<string | null>(null);
 
     const cleaned = useMemo(() => clean(message), [message]);
     const problem = validate(cleaned);
@@ -264,18 +276,16 @@ function Composer({ webhook, modalProps }: { webhook: Webhook; modalProps: Rende
         }
     }
 
-    function importJson() {
-        const text = window.prompt("Paste a webhook message as JSON");
-        if (!text) return;
-
+    function applyImport() {
         try {
-            const data = JSON.parse(text);
+            const data = JSON.parse(importText ?? "");
             setMessage({
                 username: data.username,
                 avatar_url: data.avatar_url,
                 content: data.content ?? "",
                 embeds: Array.isArray(data.embeds) ? data.embeds.slice(0, MAX_EMBEDS) : []
             });
+            setImportText(null);
             setStatus(null);
         } catch {
             setStatus({ ok: false, text: "That is not valid JSON." });
@@ -293,13 +303,21 @@ function Composer({ webhook, modalProps }: { webhook: Webhook; modalProps: Rende
                 </span>
             }
             actions={[
-                { text: "Import JSON", variant: "secondary", onClick: importJson },
+                { text: "Import JSON", variant: "secondary", onClick: () => setImportText(importText === null ? "" : null) },
                 { text: "Copy JSON", variant: "secondary", onClick: () => copyWithToast(JSON.stringify(cleaned, null, 2), "Copied message JSON") },
                 { text: sending ? "Sending" : "Send", variant: "primary", onClick: () => void send(), disabled: sending || !!problem }
             ]}
         >
             <div className={cl("columns")}>
                 <div className={cl("editor")}>
+                    {importText !== null && (
+                        <div className={cl("import")}>
+                            <Field label="Message JSON">
+                                <TextArea value={importText} rows={6} placeholder='{"content": "Hello"}' onChange={(text: string) => setImportText(text)} />
+                            </Field>
+                            <Button size="small" variant="primary" disabled={!importText.trim()} onClick={applyImport}>Apply</Button>
+                        </div>
+                    )}
                     <div className={cl("row")}>
                         <Field label="Name">
                             <TextInput value={message.username ?? ""} maxLength={80} placeholder={webhook.name} onChange={(username: string) => update({ username })} />
