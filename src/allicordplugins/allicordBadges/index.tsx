@@ -96,13 +96,25 @@ function openBadge(kind: string | undefined, userId: string) {
 const badge: ProfileBadge = {
     id: "allicord_badges",
     getBadges({ userId }) {
-        const owned = new Set([
+        const donor = [
             ...BadgeAPI.DonorBadges[userId] ?? [],
             ...BadgeAPI.EquicordDonorBadges[userId] ?? []
-        ].map(b => b.badge));
+        ];
+        const seen = new Set([
+            ...donor.map(b => b.badge),
+            ...donor.map(b => b.tooltip)
+        ]);
 
         return (users[userId] ?? [])
-            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge))
+            .filter(b => {
+                if (b.mod !== "allicord" && !settings.store[b.mod]) return false;
+
+                const key = `${b.mod}:${b.tooltip}`;
+                if (seen.has(b.badge) || seen.has(key) || (b.mod !== "allicord" && seen.has(b.tooltip))) return false;
+                seen.add(b.badge);
+                seen.add(key);
+                return true;
+            })
             .map((b, idx) => ({
                 id: `allicord_badges_${b.mod}_${idx}`,
                 iconSrc: b.badge,
