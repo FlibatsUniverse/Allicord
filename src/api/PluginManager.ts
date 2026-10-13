@@ -54,7 +54,13 @@ export const PMLogger = logger;
 let enabledPluginsSubscribedFlux = false;
 const subscribedFluxEventsPlugins = new Set<string>();
 
+export function isPluginConflicted(p: string) {
+    return Object.values(Plugins).some(o => o.required && o.conflicts?.includes(p));
+}
+
 export function isPluginEnabled(p: string) {
+    if (isPluginConflicted(p)) return false;
+
     return (
         Plugins[p]?.required ||
         Plugins[p]?.isDependency ||

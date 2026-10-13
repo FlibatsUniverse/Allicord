@@ -5,7 +5,7 @@
  */
 
 import { showNotice } from "@api/Notices";
-import { hasAnyVisibleSettings, isPluginEnabled, pluginRequiresRestart, startDependenciesRecursive, startPlugin, stopPlugin } from "@api/PluginManager";
+import { hasAnyVisibleSettings, isPluginConflicted, isPluginEnabled, pluginRequiresRestart, startDependenciesRecursive, startPlugin, stopPlugin } from "@api/PluginManager";
 import { Settings } from "@api/Settings";
 import { CogWheel, InfoIcon } from "@components/Icons";
 import { AddonCard } from "@components/settings/AddonCard";
@@ -45,6 +45,11 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
 
     function toggleEnabled() {
         const wasEnabled = isEnabled();
+
+        if (!wasEnabled && isPluginConflicted(plugin.name)) {
+            showToast(`${plugin.name} conflicts with a required plugin and can't be enabled`, "failure", { position: ToastPosition.BOTTOM });
+            return;
+        }
 
         // If we're enabling a plugin, make sure all deps are enabled recursively.
         if (!wasEnabled) {

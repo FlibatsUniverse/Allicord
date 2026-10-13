@@ -150,6 +150,11 @@ export interface PluginDef {
      */
     dependencies?: string[],
     /**
+     * Plugins that do the same job as this one. While this plugin is required,
+     * they stay disabled even if the user enables them
+     */
+    conflicts?: string[],
+    /**
      * Whether this plugin is required and forcefully enabled
      */
     required?: boolean;

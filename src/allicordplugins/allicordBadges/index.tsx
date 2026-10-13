@@ -5,10 +5,9 @@
  */
 
 import { addProfileBadge, BadgePosition, ProfileBadge, removeProfileBadge } from "@api/Badges";
-import { isPluginEnabled } from "@api/PluginManager";
+import { ApplicationCommandInputType, sendBotMessage } from "@api/Commands";
 import { definePluginSettings } from "@api/Settings";
 import { openContributorModal } from "@components/settings";
-import GlobalBadgesPlugin from "@equicordplugins/globalBadges";
 import BadgeAPI from "@plugins/_api/badges";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
@@ -45,10 +44,21 @@ const services = [
 ] as const;
 
 const settings = definePluginSettings({
-    apiUrl: {
+    provider: {
+        type: OptionType.SELECT,
+        description: "Badge API Provider",
+        options: [
+            { label: "Allicord Badges", value: "allicord", default: true },
+            { label: "Custom", value: "custom" }
+        ],
+        onChange: loadBadges
+    },
+    customUrl: {
         type: OptionType.STRING,
-        description: "Badge API to fetch badges from.",
-        default: "https://alliance.flibat.com/api/badges"
+        description: "Custom badge API URL",
+        default: "",
+        hidden: () => settings.store.provider !== "custom",
+        onChange: loadBadges
     },
     showDiscord: {
         type: OptionType.BOOLEAN,
@@ -70,18 +80,25 @@ const settings = definePluginSettings({
     } satisfies PluginSettingBooleanDef] as const))
 });
 
+const DEFAULT_API_URL = "https://alliance.flibat.com/api/badges";
+
+function getApiUrl() {
+    const { provider, customUrl } = settings.store;
+    return provider === "custom" && customUrl ? customUrl : DEFAULT_API_URL;
+}
+
 let users: Record<string, UserBadge[]> = {};
 let intervalId: ReturnType<typeof setInterval>;
 
 async function loadBadges() {
-    const base = settings.store.apiUrl.replace(/\/$/, "");
+    const base = getApiUrl().replace(/\/$/, "");
     const data = await fetch(`${base}/users`, { cache: "no-cache" }).then(r => r.json());
     users = data.users;
 }
 
 // What clicking an Allicord badge opens.
 function openBadge(kind: string | undefined, userId: string) {
-    const { origin } = new URL(settings.store.apiUrl);
+    const { origin } = new URL(getApiUrl());
     switch (kind) {
         case "contributor":
         case "developer": {
@@ -98,29 +115,13 @@ function openBadge(kind: string | undefined, userId: string) {
 const badge: ProfileBadge = {
     id: "allicord_badges",
     getBadges({ userId }) {
-        const donor = [
+        const owned = new Set([
             ...BadgeAPI.DonorBadges[userId] ?? [],
             ...BadgeAPI.EquicordDonorBadges[userId] ?? []
-        ];
-        const global = isPluginEnabled(GlobalBadgesPlugin.name)
-            ? GlobalBadgesPlugin.getGlobalBadges(userId) ?? []
-            : [];
-        const seen = new Set([
-            ...donor.map(b => b.badge),
-            ...donor.map(b => b.tooltip),
-            ...global.map(b => b.iconSrc)
-        ]);
+        ].map(b => b.badge));
 
         return (users[userId] ?? [])
-            .filter(b => {
-                if (b.mod !== "allicord" && !settings.store[b.mod]) return false;
-
-                const key = `${b.mod}:${b.tooltip}`;
-                if (seen.has(b.badge) || seen.has(key) || (b.mod !== "allicord" && seen.has(b.tooltip))) return false;
-                seen.add(b.badge);
-                seen.add(key);
-                return true;
-            })
+            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge))
             .map((b, idx) => ({
                 id: `allicord_badges_${b.mod}_${idx}`,
                 iconSrc: b.badge,
@@ -137,14 +138,28 @@ export default definePlugin({
     description: "Shows Allicord and other client mod badges on profiles. Discord and Allicord badges are always on.",
     authors: [AllicordDevs.Flibat],
     required: true,
+    conflicts: ["GlobalBadges"],
     enabledByDefault: true,
     settings,
+    commands: [{
+        name: "refresh-badges",
+        description: "Refreshes the badges shown on everyone's profile",
+        inputType: ApplicationCommandInputType.BUILT_IN,
+        async execute(_, ctx) {
+            try {
+                await loadBadges();
+                sendBotMessage(ctx.channel.id, { content: "Badges refreshed." });
+            } catch {
+                sendBotMessage(ctx.channel.id, { content: "Could not refresh badges. Try again in a moment." });
+            }
+        }
+    }],
     async start() {
         settings.store.showDiscord = true;
         settings.store.showAllicord = true;
         addProfileBadge(badge);
         await loadBadges();
-        intervalId = setInterval(loadBadges, 1000 * 60 * 30);
+        intervalId = setInterval(loadBadges, 1000 * 60 * 10);
     },
     stop() {
         clearInterval(intervalId);
