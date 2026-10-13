@@ -12,7 +12,7 @@ import { classNameFactory } from "@utils/css";
 import { copyWithToast } from "@utils/discord";
 import type { PluginNative } from "@utils/types";
 import type { RenderModalProps } from "@vencord/discord-types";
-import { Modal, openModal, Parser, TextArea, TextInput, useMemo, useState } from "@webpack/common";
+import { ColorPicker, Modal, openModal, Parser, TextArea, TextInput, useMemo, useState } from "@webpack/common";
 
 import { Embed, EmbedField, Webhook, WebhookMessage } from "./types";
 
@@ -104,11 +104,10 @@ function EmbedEditor({ embed, index, onChange, onRemove }: {
                             <TextInput value={embed.url ?? ""} onChange={(url: string) => onChange({ ...embed, url })} />
                         </Field>
                         <Field label="Color">
-                            <input
-                                type="color"
-                                className={cl("color")}
-                                value={toHex(embed.color)}
-                                onChange={e => onChange({ ...embed, color: parseInt(e.currentTarget.value.slice(1), 16) })}
+                            <ColorPicker
+                                color={embed.color ?? 0x5865f2}
+                                onChange={(color: number) => onChange({ ...embed, color })}
+                                showEyeDropper
                             />
                         </Field>
                     </div>

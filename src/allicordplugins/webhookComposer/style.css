@@ -44,16 +44,6 @@
     color: var(--header-secondary);
 }
 
-.vc-webhook-composer-color {
-    width: 100%;
-    height: 40px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    background: none;
-    cursor: pointer;
-}
-
 .vc-webhook-composer-embed {
     border: 1px solid var(--border-subtle, var(--background-modifier-accent));
     border-radius: 8px;
