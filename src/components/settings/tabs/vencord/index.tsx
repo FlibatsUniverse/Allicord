@@ -6,6 +6,7 @@
 
 import "./VencordTab.css";
 
+import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { useSettings } from "@api/Settings";
 import { Button } from "@components/Button";
@@ -19,7 +20,6 @@ import { openContributorModal, openPluginModal, SettingsTab, wrapTab } from "@co
 import { QuickAction, QuickActionCard } from "@components/settings/QuickAction";
 import { SpecialCard } from "@components/settings/SpecialCard";
 import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
-import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import SettingsPlugin from "@plugins/_core/settings";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { DONOR_ROLE_ID, GUILD_ID, IS_WINDOWS, VC_DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/constants";

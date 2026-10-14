@@ -6,8 +6,8 @@
 
 import "./styles.css";
 
-import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
 import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
+import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
 import { Devs, EquicordDevs } from "@utils/constants";
 import { isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import definePlugin from "@utils/types";

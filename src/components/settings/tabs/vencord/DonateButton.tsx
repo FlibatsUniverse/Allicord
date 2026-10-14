@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import { Flex } from "@components/Flex";
 import { DonateButton, InviteButton } from "@components/settings/DonateButton";
-import { getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import { DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/constants";
 import { GuildMemberStore } from "@webpack/common";
 
