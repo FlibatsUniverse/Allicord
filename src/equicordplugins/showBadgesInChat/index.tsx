@@ -7,7 +7,7 @@
 import "./styles.css";
 
 import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
-import badges from "@plugins/_api/badges";
+import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import { Devs, EquicordDevs } from "@utils/constants";
 import { isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import definePlugin from "@utils/types";
@@ -41,13 +41,13 @@ function CheckBadge({ badge, author }: { badge: string; author: User; }): JSX.El
         case "EquicordDonor":
             return (
                 <span style={{ order: settings.store.EquicordDonorPosition }}>
-                    {badges.getEquicordDonorBadges(author.id)?.map(badge => (
+                    {getEquicordDonorBadges(author.id)?.map(badge => (
                         <RoleIconComponent
                             key={author.id}
                             className={roleIcon}
-                            name={badge.description}
+                            name={badge.tooltip}
                             size={20}
-                            src={badge.iconSrc}
+                            src={badge.badge}
                         />
                     ))}
                 </span>
@@ -66,13 +66,13 @@ function CheckBadge({ badge, author }: { badge: string; author: User; }): JSX.El
         case "VencordDonor":
             return (
                 <span style={{ order: settings.store.VencordDonorPosition }}>
-                    {badges.getDonorBadges(author.id)?.map(badge => (
+                    {getVencordDonorBadges(author.id)?.map(badge => (
                         <RoleIconComponent
                             key={author.id}
                             className={roleIcon}
-                            name={badge.description}
+                            name={badge.tooltip}
                             size={20}
-                            src={badge.iconSrc}
+                            src={badge.badge}
                         />
                     ))}
                 </span>

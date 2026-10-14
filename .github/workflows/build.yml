@@ -1,9 +1,9 @@
 name: Allicord Build
 on:
   push:
-    branches: [dev, main]
+    branches: [dev, dev2, main]
   pull_request:
-    branches: [dev, main]
+    branches: [dev, dev2, main]
   workflow_dispatch:
 permissions:
   contents: read

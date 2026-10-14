@@ -19,7 +19,7 @@ import { openContributorModal, openPluginModal, SettingsTab, wrapTab } from "@co
 import { QuickAction, QuickActionCard } from "@components/settings/QuickAction";
 import { SpecialCard } from "@components/settings/SpecialCard";
 import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
-import BadgeAPI from "@plugins/_api/badges";
+import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
 import SettingsPlugin from "@plugins/_core/settings";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { DONOR_ROLE_ID, GUILD_ID, IS_WINDOWS, VC_DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/constants";
@@ -156,7 +156,7 @@ function Switches() {
     });
 }
 
-function EquicordSettings() {
+function AllicordSettings() {
     const donateImage = useMemo(() =>
         Math.random() > 0.5 ? DEFAULT_DONATE_IMAGE : SHIGGY_DONATE_IMAGE,
         []
@@ -186,7 +186,7 @@ function EquicordSettings() {
             ) : (
                 <SpecialCard
                     title="Support the Project"
-                    description="Please consider supporting the development of Equicord by donating!"
+                    description="Please consider supporting the development of Allicord by donating!"
                     cardImage={donateImage}
                     backgroundImage={DONOR_BACKGROUND_IMAGE}
                     backgroundColor="#c3a3ce"
@@ -198,7 +198,7 @@ function EquicordSettings() {
                 <SpecialCard
                     title="Contributions"
                     subtitle="Thank you for contributing!"
-                    description="Since you've contributed to Equicord you now have a cool new badge!"
+                    description="Since you've contributed to Allicord you now have a cool new badge!"
                     cardImage={COZY_CONTRIB_IMAGE}
                     backgroundImage={CONTRIB_BACKGROUND_IMAGE}
                     backgroundColor="#EDCC87"
@@ -284,14 +284,14 @@ function EquicordSettings() {
     );
 }
 
-export default wrapTab(EquicordSettings, "Allicord Settings");
+export default wrapTab(AllicordSettings, "Allicord Settings");
 
 export function isEquicordDonor(userId: string): boolean {
-    const donorBadges = BadgeAPI.getEquicordDonorBadges(userId);
+    const donorBadges = getEquicordDonorBadges(userId);
     return GuildMemberStore.getMember(GUILD_ID, userId)?.roles.includes(DONOR_ROLE_ID) || !!donorBadges;
 }
 
 export function isVencordDonor(userId: string): boolean {
-    const donorBadges = BadgeAPI.getDonorBadges(userId);
+    const donorBadges = getVencordDonorBadges(userId);
     return GuildMemberStore.getMember(VC_GUILD_ID, userId)?.roles.includes(VC_DONOR_ROLE_ID) || !!donorBadges;
 }

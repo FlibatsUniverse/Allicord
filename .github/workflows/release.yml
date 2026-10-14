@@ -3,12 +3,12 @@ on:
   workflow_run:
     workflows: [Allicord Build]
     types: [completed]
-    branches: [main]
+    branches: [main, dev, dev2]
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: allicord-stable-release
+  group: allicord-release-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: false
 jobs:
   package:
@@ -17,6 +17,7 @@ jobs:
     outputs:
       sha: ${{ steps.source.outputs.sha }}
       tag: ${{ steps.source.outputs.tag }}
+      branch: ${{ github.event.workflow_run.head_branch }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -26,11 +27,16 @@ jobs:
       - id: source
         env:
           BUILD_NUMBER: ${{ github.event.workflow_run.run_number }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           version=$(node -p 'require("./package.json").version')
           node -e 'if(!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(require("./package.json").version))process.exit(1)'
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          echo "tag=v$version+build.$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          if [ "$BRANCH" = main ]; then
+            echo "tag=v$version+build.$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=v$version-$BRANCH.$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: Allicord-${{ github.event.workflow_run.head_sha }}
@@ -68,7 +74,7 @@ jobs:
           sha256sum * > SHA256SUMS
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: stable-release
+          name: release-${{ github.event.workflow_run.head_branch }}
           path: release/
           if-no-files-found: error
   publish:
@@ -83,13 +89,14 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: stable-release
+          name: release-${{ needs.package.outputs.branch }}
           path: release
       - name: Publish automatic stable release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.package.outputs.tag }}
           SOURCE_SHA: ${{ needs.package.outputs.sha }}
+          BRANCH: ${{ needs.package.outputs.branch }}
         run: |
           cd release && sha256sum -c SHA256SUMS && cd ..
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then echo 'Release already published'; exit 0; fi
@@ -101,7 +108,11 @@ jobs:
             git push origin "refs/tags/$RELEASE_TAG"
           fi
           printf 'Source: https://github.com/FlibatsUniverse/Allicord/commit/%s\nIncludes an unsigned Windows graphical installer and terminal installers, client bundles and SHA-256 checksums. Close Discord before installing or repairing. Live Discord runtime testing remains ongoing.\n' "$SOURCE_SHA" > notes.md
-          latest=false
-          git fetch origin main
-          if [ "$(git rev-parse origin/main)" = "$SOURCE_SHA" ]; then latest=true; fi
-          gh release create "$RELEASE_TAG" release/* --verify-tag --title "Allicord $RELEASE_TAG $SOURCE_SHA" --notes-file notes.md --generate-notes --latest="$latest"
+          if [ "$BRANCH" = main ]; then
+            latest=false
+            git fetch origin main
+            if [ "$(git rev-parse origin/main)" = "$SOURCE_SHA" ]; then latest=true; fi
+            gh release create "$RELEASE_TAG" release/* --verify-tag --title "Allicord $RELEASE_TAG $SOURCE_SHA" --notes-file notes.md --generate-notes --latest="$latest"
+          else
+            gh release create "$RELEASE_TAG" release/* --verify-tag --prerelease --title "Allicord Development ($BRANCH) $SOURCE_SHA" --notes-file notes.md --generate-notes --latest=false
+          fi

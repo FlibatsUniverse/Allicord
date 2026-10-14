@@ -58,13 +58,20 @@ async function listUpdates() {
     const isOutdated = await fetchUpdate();
     if (!isOutdated) return [];
 
-    const data = await githubGet(`/compare/${gitHash}...${PendingHash}`);
+    const data = await githubGet(`/compare/${gitHash}...${PendingHash}`).catch(() => ({ commits: [] }));
 
-    return data.commits.map((c: any) => ({
+    const commits = data.commits.map((c: any) => ({
         hash: c.sha,
         author: c.author?.login ?? c.commit?.author?.name ?? "Unknown Author",
         message: c.commit.message.split("\n")[0]
     }));
+
+    // Switching to a channel that is behind or has diverged has no new commits, but is still a change
+    return commits.length ? commits : [{
+        hash: PendingHash!,
+        author: "Allicord",
+        message: `Switch to the ${RendererSettings.store.updateChannel ?? "stable"} build`
+    }];
 }
 
 async function fetchUpdate() {

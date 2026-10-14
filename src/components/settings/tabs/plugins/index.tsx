@@ -19,7 +19,7 @@
 import "./styles.css";
 
 import * as DataStore from "@api/DataStore";
-import { isPluginEnabled, stopPlugin } from "@api/PluginManager";
+import { isPluginConflicted, isPluginEnabled, stopPlugin } from "@api/PluginManager";
 import { useSettings } from "@api/Settings";
 import { Button } from "@components/Button";
 import { Card } from "@components/Card";
@@ -104,7 +104,8 @@ const enum SearchStatus {
     VENCORD,
     NEW,
     USER_PLUGINS,
-    API_PLUGINS
+    API_PLUGINS,
+    CONFLICTING
 }
 
 export const ExcludedReasons: Record<PluginTarget, string> = {
@@ -213,6 +214,9 @@ export default function PluginSettings() {
     const pluginFilter = useCallback((plugin: typeof Plugins[keyof typeof Plugins], newPluginsSet: Set<string> | null) => {
         const { status, tags } = searchValue;
 
+        // Plugins disabled by a conflict only show up under their own filter
+        if (isPluginConflicted(plugin.name) !== (status === SearchStatus.CONFLICTING)) return false;
+
         switch (status) {
             case SearchStatus.FAVORITES:
                 if (!settings.plugins[plugin.name]?.isFavorite) return false;
@@ -280,10 +284,29 @@ export default function PluginSettings() {
 
         const showApi = searchValue.status === SearchStatus.API_PLUGINS;
         for (const p of sortedPlugins) {
-            if (p.hidden || (!p.settings?.def && p.name.endsWith("API") && !showApi))
+            if (p.hidden || (!p.settings?.def && p.name.endsWith("API") && !showApi && !isPluginConflicted(p.name)))
                 continue;
 
             if (!pluginFilter(p, newPluginsSet)) continue;
+
+            if (isPluginConflicted(p.name)) {
+                const blocker = Object.values(Plugins).find(o => o.required && o.conflicts?.includes(p.name))?.name;
+
+                plugins.push(
+                    <Tooltip text={`Disabled because it conflicts with ${blocker}.`} key={p.name}>
+                        {({ onMouseLeave, onMouseEnter }) => (
+                            <PluginCard
+                                onMouseLeave={onMouseLeave}
+                                onMouseEnter={onMouseEnter}
+                                onRestartNeeded={handleRestartNeeded}
+                                disabled={true}
+                                plugin={p}
+                            />
+                        )}
+                    </Tooltip>
+                );
+                continue;
+            }
 
             const isRequired = p.required || p.isDependency || depMap[p.name]?.some(d => settings.plugins[d].enabled);
 
@@ -362,7 +385,7 @@ export default function PluginSettings() {
 
     // Code directly taken from supportHelper.tsx
     const { totalStockPlugins, totalUserPlugins, enabledStockPlugins, enabledUserPlugins, enabledPlugins } = useMemo(() => {
-        const isApiPlugin = (plugin: string) => plugin.endsWith("API") || Plugins[plugin].required;
+        const isApiPlugin = (plugin: string) => plugin.endsWith("API") || Plugins[plugin].required || isPluginConflicted(plugin);
 
         const totalPlugins = Object.keys(Plugins).filter(p => !isApiPlugin(p));
         const enabledPlugins = Object.keys(Plugins).filter(p => isPluginEnabled(p) && !isApiPlugin(p));
@@ -437,6 +460,7 @@ export default function PluginSettings() {
                             { label: "Show New", value: SearchStatus.NEW },
                             hasUserPlugins && { label: "Show UserPlugins", value: SearchStatus.USER_PLUGINS },
                             { label: "Show API Plugins", value: SearchStatus.API_PLUGINS },
+                            { label: "Show Conflicting Plugins", value: SearchStatus.CONFLICTING },
                         ].filter(isTruthy)}
                         serialize={String}
                         select={status => setSearchValue(prev => ({ ...prev, status }))}

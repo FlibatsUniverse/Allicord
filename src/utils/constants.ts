@@ -713,6 +713,10 @@ export const AllicordDevs = Object.freeze({
     Flibat: {
         name: "Flibat",
         id: 646183151441281035n
+    },
+    coolpixels: {
+        name: "coolpixels",
+        id: 670465510973898752n
     }
 } satisfies Record<string, Dev>);
 

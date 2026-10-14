@@ -78,7 +78,7 @@ export default definePlugin({
     name: "WebhookComposer",
     description: "Adds a Send Message button to webhook settings that opens a message builder with embeds and a live preview",
     tags: ["Servers", "Utility"],
-    authors: [AllicordDevs.Flibat],
+    authors: [AllicordDevs.Flibat, AllicordDevs.coolpixels],
     start() {
         observer = new MutationObserver(scan);
         observer.observe(document.body, { childList: true, subtree: true });
