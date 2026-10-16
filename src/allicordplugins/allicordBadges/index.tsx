@@ -36,6 +36,7 @@ interface UserBadge {
 
 const services = [
     ["vencord", "Vencord", true],
+    ["allicord", "Allicord", true],
     ["equicord", "Equicord"],
     ["badgevault", "BadgeVault"],
     ["nekocord", "Nekocord"],
@@ -87,22 +88,17 @@ const settings = definePluginSettings({
         default: true,
         disabled: () => true
     },
-    showAllicord: {
-        type: OptionType.BOOLEAN,
-        description: "Allicord badges. Always on.",
-        default: true,
-        disabled: () => true
-    },
-    ...Object.fromEntries(services.map(([id, name, on]) => [id, {
+    ...Object.fromEntries(services.map(([id, name, on]) => [id === "allicord" ? "showAllicord" : id, {
         type: OptionType.BOOLEAN,
         description: `Show ${name} badges.`,
         default: !!on,
+        ...(id === "allicord" ? { disabled: () => true } : {}),
         onChange: loadBadges
     } satisfies PluginSettingBooleanDef] as const))
 });
 
 // Allicord's own badges come first, then Flibat's Universe, then other client mods in the order listed above
-const kindOrder = ["owner", "developer", "contributor", "donor", "bot", "universe"];
+const kindOrder = ["developer", "contributor", "donor", "bot", "universe"];
 
 function badgeRank({ mod, kind }: UserBadge) {
     if (mod === "allicord") {
@@ -128,7 +124,7 @@ let intervalId: ReturnType<typeof setInterval>;
 async function loadBadges() {
     const base = getApiUrl().replace(/\/$/, "");
     const data = await fetch(`${base}/users`, { cache: "no-cache" }).then(r => r.json());
-    users = data.users;
+    users = data.data?.users ?? data.users;
     setAllicordContributors(Object.entries(users)
         .filter(([, badges]) => badges.some(b => b.mod === "allicord" && (b.kind === "contributor" || b.kind === "developer")))
         .map(([id]) => id));
@@ -148,7 +144,6 @@ function openBadge(kind: string | undefined, userId: string) {
             if (user) openContributorModal(user);
             break;
         }
-        case "owner": return UniverseModal(origin, true);
         case "universe": return UniverseModal(origin);
         case "bot": return BotModal(origin);
         case "donor": return AllicordDonorModal(origin);

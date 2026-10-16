@@ -60,12 +60,12 @@ function openBadgeModal({ title, heart, images, text, action }: BadgeModalOption
     ));
 }
 
-export function UniverseModal(apiOrigin: string, owner = false) {
+export function UniverseModal(apiOrigin: string) {
     openBadgeModal({
-        title: owner ? "Flibat's Universe Owner" : "Flibat's Universe",
-        images: owner ? [`${apiOrigin}/v1/alliance/badges/assets/allicord/owner.svg`] : ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/v1/alliance/badges/flibatsuniverse.svg?color=${c}`),
+        title: "Flibat's Universe",
+        images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/v1/alliance/badges/flibatsuniverse.svg?color=${c}`),
         text: [
-            owner ? "This badge is granted automatically to holders of the Owner role in Flibat's Universe." : "This badge is granted automatically to volunteers in Flibat's Universe, the community behind Alliance Development.",
+            "This badge is granted automatically to volunteers in Flibat's Universe, the community behind Alliance Development.",
             "Its color matches the member's rank in the community."
         ],
         action: <Button onClick={() => openInviteModal("XszKXdqaZP")}>Join the community</Button>
