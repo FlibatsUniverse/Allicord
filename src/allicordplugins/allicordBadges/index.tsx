@@ -21,11 +21,13 @@ import { Logger } from "@utils/Logger";
 import { shouldShowAllicordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
 import { ContextMenuApi, Menu, showToast, UserStore } from "@webpack/common";
+import flibatsuniverseIcon from "file://../../../assets/icons/allicord/flibatsuniverse.webp?base64";
+import customIcon from "file://../../../assets/icons/misc/userplugin.webp?base64";
 
 import Plugins, { PluginMeta } from "~plugins";
 
 import { getEquicordDonorBadges, getVencordDonorBadges, loadDonorBadges } from "./donors";
-import { AllicordDonorModal, BotModal, UniverseModal } from "./modals";
+import { AllicordDonorModal, BotModal, FlibatsUniverseModal } from "./modals";
 
 interface UserBadge {
     tooltip: string;
@@ -56,6 +58,22 @@ const services = [
     ["record", "ReCord"]
 ] as const;
 
+const providerIcons: Record<string, string> = {
+    allicord: `data:image/webp;base64,${flibatsuniverseIcon}`,
+    custom: `data:image/webp;base64,${customIcon}`
+};
+
+function renderProvider(option?: { label: string; value: string; }) {
+    if (!option) return null;
+
+    return (
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={providerIcons[option.value]} alt="" width={20} height={20} />
+            {option.label}
+        </span>
+    );
+}
+
 const settings = definePluginSettings({
     provider: {
         type: OptionType.SELECT,
@@ -64,6 +82,10 @@ const settings = definePluginSettings({
             { label: "Aerolith API", value: "allicord", default: true },
             { label: "Custom", value: "custom" }
         ],
+        componentProps: {
+            renderOptionLabel: renderProvider,
+            renderOptionValue: (options: { label: string; value: string; }[]) => renderProvider(options?.[0])
+        },
         onChange: loadBadges
     },
     customUrl: {
@@ -97,8 +119,8 @@ const settings = definePluginSettings({
     } satisfies PluginSettingBooleanDef] as const))
 });
 
-// Allicord's own badges come first, then Flibat's Universe, then other client mods in the order listed above
-const kindOrder = ["developer", "contributor", "donor", "bot", "universe"];
+// Allicord's own badges come first, then flibatsuniverse, then other client mods in the order listed above
+const kindOrder = ["developer", "contributor", "donor", "bot", "flibatsuniverse"];
 
 function badgeRank({ mod, kind }: UserBadge) {
     if (mod === "allicord") {
@@ -144,7 +166,7 @@ function openBadge(kind: string | undefined, userId: string) {
             if (user) openContributorModal(user);
             break;
         }
-        case "universe": return UniverseModal(origin);
+        case "flibatsuniverse": return FlibatsUniverseModal(origin);
         case "bot": return BotModal(origin);
         case "donor": return AllicordDonorModal(origin);
     }
