@@ -85,6 +85,8 @@ export const shouldShowContributorBadge = (id: string) => isPluginDev(id) && Ven
 export const isEquicordPluginDev = (id: string) => Object.hasOwn(EquicordDevsById, id);
 export const shouldShowEquicordContributorBadge = (id: string) => isEquicordPluginDev(id) && EquicordDevsById[id].badge !== false;
 
+export const shouldShowAllicordContributorBadge = (id: string) => isAllicordDev(id) && AllicordDevsById[id].badge !== false;
+
 export const isAllicordDev = (id: string) => Object.hasOwn(AllicordDevsById, id);
 
 export const isAnyPluginDev = (id: string) => Object.hasOwn(VencordDevsById, id) || Object.hasOwn(EquicordDevsById, id) || isAllicordDev(id);

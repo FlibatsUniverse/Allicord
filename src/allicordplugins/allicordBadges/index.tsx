@@ -18,7 +18,7 @@ import { setAllicordContributors } from "@utils/allicordContributors";
 import { AllicordDevs, Devs, EquicordDevs } from "@utils/constants";
 import { copyWithToast } from "@utils/discord";
 import { Logger } from "@utils/Logger";
-import { shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
+import { shouldShowAllicordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
 import { ContextMenuApi, Menu, showToast, UserStore } from "@webpack/common";
 
@@ -60,7 +60,7 @@ const settings = definePluginSettings({
         type: OptionType.SELECT,
         description: "Badge API Provider",
         options: [
-            { label: "Allicord Badges", value: "allicord", default: true },
+            { label: "Aerolith API", value: "allicord", default: true },
             { label: "Custom", value: "custom" }
         ],
         onChange: loadBadges
@@ -113,7 +113,7 @@ function badgeRank({ mod, kind }: UserBadge) {
     return kindOrder.length + services.findIndex(([id]) => id === mod);
 }
 
-const DEFAULT_API_URL = "https://alliance.flibat.com/api/badges";
+const DEFAULT_API_URL = "https://api.flibat.com/v1/badges";
 
 function getApiUrl() {
     const { provider, customUrl } = settings.store;
@@ -130,7 +130,7 @@ async function loadBadges() {
     const data = await fetch(`${base}/users`, { cache: "no-cache" }).then(r => r.json());
     users = data.users;
     setAllicordContributors(Object.entries(users)
-        .filter(([, badges]) => badges.some(b => b.kind === "contributor" || b.kind === "developer"))
+        .filter(([, badges]) => badges.some(b => b.mod === "allicord" && (b.kind === "contributor" || b.kind === "developer")))
         .map(([id]) => id));
 }
 
@@ -214,6 +214,16 @@ const EquicordContributorBadge: ProfileBadge = {
     props: roundedBadge
 };
 
+const AllicordContributorBadge: ProfileBadge = {
+    id: "allicord_contributor_badge",
+    description: "Allicord Contributor",
+    iconSrc: `${DEFAULT_API_URL}/assets/allicord/contributor.svg`,
+    position: BadgePosition.START,
+    shouldShow: ({ userId }) => shouldShowAllicordContributorBadge(userId),
+    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId)),
+    props: roundedBadge
+};
+
 const UserPluginContributorBadge: ProfileBadge = {
     id: "user_plugin_contributor_badge",
     description: "User Plugin Contributor",
@@ -264,7 +274,10 @@ const badge: ProfileBadge = {
         ].map(b => b.badge));
 
         return (users[userId] ?? [])
-            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge))
+            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge)
+                && !(b.mod === "allicord" && b.kind === "contributor" && shouldShowAllicordContributorBadge(userId))
+                && !(b.mod === "vencord" && b.tooltip === "Vencord Contributor" && shouldShowContributorBadge(userId))
+                && !(b.mod === "equicord" && b.tooltip === "Equicord Contributor" && shouldShowEquicordContributorBadge(userId)))
             .sort((a, b) => badgeRank(a) - badgeRank(b))
             .map((b, idx) => ({
                 id: `allicord_badges_${b.mod}_${idx}`,
@@ -278,7 +291,7 @@ const badge: ProfileBadge = {
     }
 };
 
-const registered = [ContributorBadge, EquicordContributorBadge, UserPluginContributorBadge, badge, donorBadge];
+const registered = [ContributorBadge, EquicordContributorBadge, AllicordContributorBadge, UserPluginContributorBadge, badge, donorBadge];
 
 export default definePlugin({
     name: "AllicordBadges",
@@ -376,8 +389,9 @@ export default definePlugin({
         settings.store.showAllicord = true;
         // The last badge added is shown first: donors, then Allicord and other mods, then contributors
         registered.forEach(addProfileBadge);
-        await refreshBadges();
-        intervalId = setInterval(refreshBadges, 1000 * 60 * 10);
+        const refresh = () => refreshBadges().catch(e => logger.error("Could not refresh badges", e));
+        await refresh();
+        intervalId = setInterval(refresh, 1000 * 60 * 10);
     },
     stop() {
         clearInterval(intervalId);
