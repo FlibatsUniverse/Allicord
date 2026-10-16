@@ -102,7 +102,7 @@ const settings = definePluginSettings({
 });
 
 // Allicord's own badges come first, then Flibat's Universe, then other client mods in the order listed above
-const kindOrder = ["developer", "contributor", "donor", "bot", "universe"];
+const kindOrder = ["owner", "developer", "contributor", "donor", "bot", "universe"];
 
 function badgeRank({ mod, kind }: UserBadge) {
     if (mod === "allicord") {
@@ -113,7 +113,7 @@ function badgeRank({ mod, kind }: UserBadge) {
     return kindOrder.length + services.findIndex(([id]) => id === mod);
 }
 
-const DEFAULT_API_URL = "https://api.flibat.com/v1/badges";
+const DEFAULT_API_URL = "https://api.flibat.com/v1/alliance/badges";
 
 function getApiUrl() {
     const { provider, customUrl } = settings.store;
@@ -148,6 +148,7 @@ function openBadge(kind: string | undefined, userId: string) {
             if (user) openContributorModal(user);
             break;
         }
+        case "owner": return UniverseModal(origin, true);
         case "universe": return UniverseModal(origin);
         case "bot": return BotModal(origin);
         case "donor": return AllicordDonorModal(origin);
@@ -295,7 +296,7 @@ const registered = [ContributorBadge, EquicordContributorBadge, AllicordContribu
 
 export default definePlugin({
     name: "AllicordBadges",
-    description: "Adds badges to profiles: Allicord's own, Vencord and Equicord donors and contributors, and other client mods. Replaces BadgeAPI and GlobalBadges.",
+    description: "Adds contributor, donor and community badges to user profiles.",
     tags: ["Appearance"],
     authors: [
         AllicordDevs.Flibat,
