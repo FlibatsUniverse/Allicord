@@ -65,7 +65,7 @@ export function UniverseModal(apiOrigin: string) {
         title: "Flibat's Universe",
         images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/v1/alliance/badges/flibatsuniverse.svg?color=${c}`),
         text: [
-            "This badge is granted automatically to volunteers in Flibat's Universe, the community behind Alliance Development.",
+            "This badge is granted automatically to server staff in Flibat's Universe, the community behind Alliance Development.",
             "Its color matches the member's rank in the community."
         ],
         action: <Button onClick={() => openInviteModal("XszKXdqaZP")}>Join the community</Button>
