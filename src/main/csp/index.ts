@@ -64,6 +64,7 @@ export const CspPolicies: PolicyMap = {
     "*.vencord.dev": ImageSrc, // VenCloud (api.vencord.dev) and Badges (badges.vencord.dev)
     "*.equicord.org": ImageSrc, // Equicord assets (plugin source badges, icons)
     "equicord.org": ImageSrc,
+    "api.flibat.com": ImageSrc,
     "alliance.flibat.com": ImageSrc, // Allicord badge API and badge images
     "nekocord.dev": ImageSrc, // Badge images used by AllicordBadges
     "aliucord.com": ImageSrc,

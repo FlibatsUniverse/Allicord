@@ -63,9 +63,9 @@ function openBadgeModal({ title, heart, images, text, action }: BadgeModalOption
 export function UniverseModal(apiOrigin: string) {
     openBadgeModal({
         title: "Flibat's Universe",
-        images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/api/badges/flibatsuniverse.svg?color=${c}`),
+        images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/v1/alliance/badges/flibatsuniverse.svg?color=${c}`),
         text: [
-            "This badge is given to the community moderators of Flibat's Universe, the team behind Alliance Development.",
+            "This badge is granted automatically to server staff in Flibat's Universe, the community behind Alliance Development.",
             "Its color matches the member's rank in the community."
         ],
         action: <Button onClick={() => openInviteModal("XszKXdqaZP")}>Join the community</Button>
@@ -75,7 +75,7 @@ export function UniverseModal(apiOrigin: string) {
 export function BotModal(apiOrigin: string) {
     openBadgeModal({
         title: "Official Alliance Bot",
-        images: [`${apiOrigin}/badges/allicord/bot.svg`],
+        images: [`${apiOrigin}/v1/alliance/badges/assets/allicord/bot.svg`],
         text: ["This is an official bot made and run by Alliance Development."],
         action: <Button onClick={() => VencordNative.native.openExternal("https://alliance.flibat.com/invite")}>Add Alliance</Button>
     });
@@ -85,7 +85,7 @@ export function AllicordDonorModal(apiOrigin: string) {
     openBadgeModal({
         title: "Allicord Donor",
         heart: true,
-        images: ["donor", "donor-night"].map(n => `${apiOrigin}/badges/allicord/${n}.svg`),
+        images: ["donor", "donor-night"].map(n => `${apiOrigin}/v1/alliance/badges/assets/allicord/${n}.svg`),
         text: [
             "This badge is a special perk for Allicord donors.",
             "Please consider supporting the development of Allicord by becoming a donor. It would mean a lot!"
