@@ -60,7 +60,7 @@ function openBadgeModal({ title, heart, images, text, action }: BadgeModalOption
     ));
 }
 
-export function UniverseModal(apiOrigin: string) {
+export function FlibatsUniverseModal(apiOrigin: string) {
     openBadgeModal({
         title: "Flibat's Universe",
         images: ["ff8ab6", "6bc8ff", "ffb86b"].map(c => `${apiOrigin}/v1/alliance/badges/flibatsuniverse.svg?color=${c}`),
