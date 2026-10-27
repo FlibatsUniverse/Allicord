@@ -62,7 +62,7 @@ export function InviteButton({
             onClick={async e => {
                 e.preventDefault();
                 openInviteModal("XszKXdqaZP").catch(() =>
-                    showToast("Invalid or expired invite"),
+                    showToast({ text: "Invalid or expired invite" }),
                 );
             }}
             className={className || "vc-donate-button"}

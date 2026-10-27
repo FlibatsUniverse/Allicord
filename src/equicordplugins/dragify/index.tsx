@@ -167,7 +167,7 @@ export default definePlugin({
             replacement: [
                 // Voice channel rows (guild sidebar)
                 {
-                    match: /(?<=this.getTooltipText\(\),.{0,100})iconClassName:/,
+                    match: /(?<=ref:this.channelItemRef,.{0,100})iconClassName:/,
                     replace: "draggable:!0,onDragStart:e=>$self.onChannelDragStart(e,{id:this?.props?.channel?.id,guild_id:this?.props?.channel?.guild_id}),$&"
                 },
                 // Voice channel rows (guild sidebar fallback - li wrapper)
@@ -293,7 +293,7 @@ export default definePlugin({
         } catch (error) {
             clearDragState();
             logger.error("Failed handling drop", error);
-            showToast("Dragify failed to handle drop.", "failure");
+            showToast({ text: "Dragify failed to handle drop.", variant: "critical" });
         }
     },
 

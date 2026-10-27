@@ -102,8 +102,6 @@ export interface Settings {
         settingsSync: boolean;
         settingsSyncVersion: number;
     };
-
-    ignoreResetWarning: boolean;
 }
 
 const DefaultSettings: Settings = {
@@ -150,8 +148,6 @@ const DefaultSettings: Settings = {
         settingsSync: false,
         settingsSyncVersion: 0
     },
-
-    ignoreResetWarning: false,
 };
 
 const settings = !IS_REPORTER ? VencordNative.settings.get() : {} as Settings;
