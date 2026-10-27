@@ -1,4 +1,4 @@
-module equilotl
+module allicordinstaller
 
 go 1.26.2
 

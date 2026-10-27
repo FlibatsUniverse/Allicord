@@ -167,7 +167,7 @@ export function initPluginInstall(_, link: string, source: string, owner: string
 
 async function build(): Promise<any> {
     return new Promise((resolve, reject) => {
-        const proc = exec("pnpm build --dev", {
+        const proc = exec("bun run build --dev", {
             cwd: join(vencordPath, ".."),
             shell: process.env.SHELL || process.env.ComSpec || "/bin/sh"
         });

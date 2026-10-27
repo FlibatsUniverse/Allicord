@@ -1,0 +1,7 @@
+[install]
+# Wait a week before installing a new release
+minimumReleaseAge = 604800
+
+[run]
+# Run package scripts and binaries with Bun instead of Node
+bun = true

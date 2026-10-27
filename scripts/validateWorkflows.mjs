@@ -13,7 +13,7 @@ for (const file of readdirSync(".github/workflows").filter(name => name.endsWith
         throw new Error(`${file} needs jobs and explicit permissions.`);
     for (const job of Object.values(workflow.jobs)) {
         for (const step of job.steps ?? []) {
-            if (step.uses && !/^actions\/[\w-]+@[a-f0-9]{40}$|^pnpm\/action-setup@[a-f0-9]{40}$/.test(step.uses))
+            if (step.uses && !/^actions\/[\w-]+@[a-f0-9]{40}$|^oven-sh\/setup-bun@[a-f0-9]{40}$/.test(step.uses))
                 throw new Error(`${file} contains an unpinned or unexpected action: ${step.uses}`);
         }
     }

@@ -23,7 +23,7 @@ Follow .rules for TypeScript, supported APIs, GPL headers and plugin policy. Use
 
 ## Validation
 
-Install with pnpm install --frozen-lockfile using Node 24 and packageManager from package.json. Run pnpm testTsc, pnpm lint, pnpm lint-styles, pnpm lint:intl, pnpm lint:patches, pnpm generatePluginJson, pnpm buildStandalone and pnpm buildWebStandalone. These cover the inherited test script without its automatic lint fixes. Upstream has no separate unit test command. Review workflow changes and dependency compatibility. Test affected behavior in Discord; compilation alone does not validate runtime patches.
+Install with bun install --frozen-lockfile using the Bun version in packageManager from package.json. Run bun run testTsc, bun run lint, bun run lint-styles, bun run lint:intl, bun run lint:patches, bun run generatePluginJson, bun run buildStandalone and bun run buildWebStandalone. These cover the inherited test script without its automatic lint fixes. Upstream has no separate unit test command. Review workflow changes and dependency compatibility. Test affected behavior in Discord; compilation alone does not validate runtime patches.
 
 ## Upstream synchronization
 

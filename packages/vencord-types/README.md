@@ -1,11 +1,7 @@
 # Equicord Types
 
-Typings for Equicord's api, published to npm
+Typings for Equicord's api, published to the npm registry
 
 ```sh
-npm i @equicord/types
-
-yarn add @equicord/types
-
-pnpm add @equicord/types
+bun add @equicord/types
 ```

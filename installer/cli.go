@@ -10,7 +10,7 @@ package main
 
 import (
 	"bytes"
-	"equilotl/buildinfo"
+	"allicordinstaller/buildinfo"
 	"errors"
 	"flag"
 	"fmt"
@@ -113,7 +113,7 @@ func main() {
 			<-SelfUpdateCheckDoneChan
 			if IsSelfOutdated {
 				Log.Warn("Your installer is outdated.")
-				Log.Warn("To update, select the 'Update Equilotl' option to update, or run with --update-self")
+				Log.Warn("To update, select the 'Update Allicord Installer' option to update, or run with --update-self")
 			}
 		}()
 
@@ -124,7 +124,7 @@ func main() {
 			"Install OpenAsar",
 			"Uninstall OpenAsar",
 			"View Help Menu",
-			"Update Equilotl",
+			"Update Allicord Installer",
 			"Quit",
 		}
 		_, choice, err := (&promptui.Select{
@@ -140,7 +140,7 @@ func main() {
 			return
 		case "Quit":
 			return
-		case "Update Equilotl":
+		case "Update Allicord Installer":
 			if err := UpdateSelf(); err != nil {
 				Log.Error("Failed to update self:", err)
 				exitFailure()

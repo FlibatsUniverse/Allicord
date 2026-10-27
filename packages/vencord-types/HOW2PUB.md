@@ -1,5 +1,5 @@
 # How to publish
 
-1. run `pnpm generateTypes` in the project root
+1. run `bun run generateTypes` in the project root
 2. bump package.json version
-3. npm publish
+3. bun publish

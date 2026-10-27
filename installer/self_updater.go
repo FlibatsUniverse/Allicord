@@ -7,7 +7,7 @@
 package main
 
 import (
-	"equilotl/buildinfo"
+	"allicordinstaller/buildinfo"
 	"errors"
 	"fmt"
 	"io"

@@ -7,9 +7,7 @@ While it was primarily created for Equicord based on Vencord and its respective 
 ## Installation
 
 ```bash
-npm install -D @equicord/discord-types
-yarn add -D @equicord/discord-types
-pnpm add -D @equicord/discord-types
+bun add -D @equicord/discord-types
 ```
 
 ## Example Usage

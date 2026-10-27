@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "pnpm build",
+            "command": "bun run build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,7 +16,7 @@
             // for use with the vencord companion extension
             "label": "Build Companion Reporter",
             "type": "shell",
-            "command": "pnpm build --dev --reporter --companion-test",
+            "command": "bun run build --dev --reporter --companion-test",
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -28,14 +28,14 @@
         {
             "label": "Build Dev",
             "type": "shell",
-            "command": "pnpm build --dev",
+            "command": "bun run build --dev",
             "group": "build"
         },
         {
             // for use with the vencord companion extension
             "label": "Build Companion Reporter",
             "type": "shell",
-            "command": "pnpm build --dev --reporter --companion-test",
+            "command": "bun run build --dev --reporter --companion-test",
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -47,13 +47,13 @@
         {
             "label": "Build Dev",
             "type": "shell",
-            "command": "pnpm build --dev",
+            "command": "bun run build --dev",
             "group": "build"
         },
         {
             "label": "Watch",
             "type": "shell",
-            "command": "pnpm watch",
+            "command": "bun run watch",
             "problemMatcher": [],
             "group": {
                 "kind": "build"

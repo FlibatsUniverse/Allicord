@@ -73,8 +73,8 @@ async function pull() {
 async function build() {
     const opts = { cwd: EQUICORD_DIR };
 
-    const command = isFlatpak ? "flatpak-spawn" : "node";
-    const args = isFlatpak ? ["--host", "node", "scripts/build/build.mjs"] : ["scripts/build/build.mjs"];
+    const command = isFlatpak ? "flatpak-spawn" : "bun";
+    const args = isFlatpak ? ["--host", "bun", "scripts/build/build.mjs"] : ["scripts/build/build.mjs"];
 
     if (IS_DEV) args.push("--dev");
 

@@ -18,8 +18,6 @@
 
 // @ts-check
 
-import "../suppressExperimentalWarnings.js";
-import "../checkNodeVersion.js";
 
 import { exec, execSync } from "child_process";
 import esbuild, { build, context } from "esbuild";
