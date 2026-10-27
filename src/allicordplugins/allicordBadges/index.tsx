@@ -18,14 +18,16 @@ import { setAllicordContributors } from "@utils/allicordContributors";
 import { AllicordDevs, Devs, EquicordDevs } from "@utils/constants";
 import { copyWithToast } from "@utils/discord";
 import { Logger } from "@utils/Logger";
-import { shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
+import { shouldShowAllicordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin, { OptionType, PluginSettingBooleanDef } from "@utils/types";
 import { ContextMenuApi, Menu, showToast, UserStore } from "@webpack/common";
+import flibatsuniverseIcon from "file://../../../assets/icons/allicord/flibatsuniverse.webp?base64";
+import customIcon from "file://../../../assets/icons/misc/userplugin.webp?base64";
 
 import Plugins, { PluginMeta } from "~plugins";
 
 import { getEquicordDonorBadges, getVencordDonorBadges, loadDonorBadges } from "./donors";
-import { AllicordDonorModal, BotModal, UniverseModal } from "./modals";
+import { AllicordDonorModal, BotModal, FlibatsUniverseModal } from "./modals";
 
 interface UserBadge {
     tooltip: string;
@@ -36,6 +38,7 @@ interface UserBadge {
 
 const services = [
     ["vencord", "Vencord", true],
+    ["allicord", "Allicord", true],
     ["equicord", "Equicord"],
     ["badgevault", "BadgeVault"],
     ["nekocord", "Nekocord"],
@@ -55,14 +58,34 @@ const services = [
     ["record", "ReCord"]
 ] as const;
 
+const providerIcons: Record<string, string> = {
+    allicord: `data:image/webp;base64,${flibatsuniverseIcon}`,
+    custom: `data:image/webp;base64,${customIcon}`
+};
+
+function renderProvider(option?: { label: string; value: string; }) {
+    if (!option) return null;
+
+    return (
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={providerIcons[option.value]} alt="" width={20} height={20} />
+            {option.label}
+        </span>
+    );
+}
+
 const settings = definePluginSettings({
     provider: {
         type: OptionType.SELECT,
         description: "Badge API Provider",
         options: [
-            { label: "Allicord Badges", value: "allicord", default: true },
+            { label: "Aerolith API", value: "allicord", default: true },
             { label: "Custom", value: "custom" }
         ],
+        componentProps: {
+            renderOptionLabel: renderProvider,
+            renderOptionValue: (options: { label: string; value: string; }[]) => renderProvider(options?.[0])
+        },
         onChange: loadBadges
     },
     customUrl: {
@@ -87,22 +110,17 @@ const settings = definePluginSettings({
         default: true,
         disabled: () => true
     },
-    showAllicord: {
-        type: OptionType.BOOLEAN,
-        description: "Allicord badges. Always on.",
-        default: true,
-        disabled: () => true
-    },
-    ...Object.fromEntries(services.map(([id, name, on]) => [id, {
+    ...Object.fromEntries(services.map(([id, name, on]) => [id === "allicord" ? "showAllicord" : id, {
         type: OptionType.BOOLEAN,
         description: `Show ${name} badges.`,
         default: !!on,
+        ...(id === "allicord" ? { disabled: () => true } : {}),
         onChange: loadBadges
     } satisfies PluginSettingBooleanDef] as const))
 });
 
-// Allicord's own badges come first, then Flibat's Universe, then other client mods in the order listed above
-const kindOrder = ["developer", "contributor", "donor", "bot", "universe"];
+// Allicord's own badges come first, then flibatsuniverse, then other client mods in the order listed above
+const kindOrder = ["developer", "contributor", "donor", "bot", "flibatsuniverse"];
 
 function badgeRank({ mod, kind }: UserBadge) {
     if (mod === "allicord") {
@@ -113,7 +131,7 @@ function badgeRank({ mod, kind }: UserBadge) {
     return kindOrder.length + services.findIndex(([id]) => id === mod);
 }
 
-const DEFAULT_API_URL = "https://alliance.flibat.com/api/badges";
+const DEFAULT_API_URL = "https://api.flibat.com/v1/alliance/badges";
 
 function getApiUrl() {
     const { provider, customUrl } = settings.store;
@@ -128,9 +146,9 @@ let intervalId: ReturnType<typeof setInterval>;
 async function loadBadges() {
     const base = getApiUrl().replace(/\/$/, "");
     const data = await fetch(`${base}/users`, { cache: "no-cache" }).then(r => r.json());
-    users = data.users;
+    users = data.data?.users ?? data.users;
     setAllicordContributors(Object.entries(users)
-        .filter(([, badges]) => badges.some(b => b.kind === "contributor" || b.kind === "developer"))
+        .filter(([, badges]) => badges.some(b => b.mod === "allicord" && (b.kind === "contributor" || b.kind === "developer")))
         .map(([id]) => id));
 }
 
@@ -148,7 +166,7 @@ function openBadge(kind: string | undefined, userId: string) {
             if (user) openContributorModal(user);
             break;
         }
-        case "universe": return UniverseModal(origin);
+        case "flibatsuniverse": return FlibatsUniverseModal(origin);
         case "bot": return BotModal(origin);
         case "donor": return AllicordDonorModal(origin);
     }
@@ -214,6 +232,16 @@ const EquicordContributorBadge: ProfileBadge = {
     props: roundedBadge
 };
 
+const AllicordContributorBadge: ProfileBadge = {
+    id: "allicord_contributor_badge",
+    description: "Allicord Contributor",
+    iconSrc: `${DEFAULT_API_URL}/assets/allicord/contributor.svg`,
+    position: BadgePosition.START,
+    shouldShow: ({ userId }) => shouldShowAllicordContributorBadge(userId),
+    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId)),
+    props: roundedBadge
+};
+
 const UserPluginContributorBadge: ProfileBadge = {
     id: "user_plugin_contributor_badge",
     description: "User Plugin Contributor",
@@ -264,7 +292,10 @@ const badge: ProfileBadge = {
         ].map(b => b.badge));
 
         return (users[userId] ?? [])
-            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge))
+            .filter(b => (b.mod === "allicord" || settings.store[b.mod]) && !owned.has(b.badge)
+                && !(b.mod === "allicord" && b.kind === "contributor" && shouldShowAllicordContributorBadge(userId))
+                && !(b.mod === "vencord" && b.tooltip === "Vencord Contributor" && shouldShowContributorBadge(userId))
+                && !(b.mod === "equicord" && b.tooltip === "Equicord Contributor" && shouldShowEquicordContributorBadge(userId)))
             .sort((a, b) => badgeRank(a) - badgeRank(b))
             .map((b, idx) => ({
                 id: `allicord_badges_${b.mod}_${idx}`,
@@ -278,11 +309,11 @@ const badge: ProfileBadge = {
     }
 };
 
-const registered = [ContributorBadge, EquicordContributorBadge, UserPluginContributorBadge, badge, donorBadge];
+const registered = [ContributorBadge, EquicordContributorBadge, AllicordContributorBadge, UserPluginContributorBadge, badge, donorBadge];
 
 export default definePlugin({
     name: "AllicordBadges",
-    description: "Adds badges to profiles: Allicord's own, Vencord and Equicord donors and contributors, and other client mods. Replaces BadgeAPI and GlobalBadges.",
+    description: "Adds contributor, donor and community badges to user profiles.",
     tags: ["Appearance"],
     authors: [
         AllicordDevs.Flibat,
@@ -376,8 +407,9 @@ export default definePlugin({
         settings.store.showAllicord = true;
         // The last badge added is shown first: donors, then Allicord and other mods, then contributors
         registered.forEach(addProfileBadge);
-        await refreshBadges();
-        intervalId = setInterval(refreshBadges, 1000 * 60 * 10);
+        const refresh = () => refreshBadges().catch(e => logger.error("Could not refresh badges", e));
+        await refresh();
+        intervalId = setInterval(refresh, 1000 * 60 * 10);
     },
     stop() {
         clearInterval(intervalId);
