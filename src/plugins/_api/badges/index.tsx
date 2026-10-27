@@ -22,7 +22,6 @@ import { _getBadges, BadgePosition, BadgeRarity, BadgeUserArgs, DirectoryBadge, 
 import ErrorBoundary from "@components/ErrorBoundary";
 import { CopyIcon, LinkIcon } from "@components/Icons";
 import { openContributorModal } from "@components/settings/tabs";
-import { SourceIcons } from "@components/settings/tabs/plugins/sourceIcons";
 import { Devs } from "@utils/constants";
 import { copyWithToast } from "@utils/discord";
 import { Logger } from "@utils/Logger";

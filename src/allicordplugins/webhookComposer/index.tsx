@@ -57,7 +57,7 @@ function addSendButton(copyButton: HTMLElement) {
 
         const webhook = findWebhook(copyButton);
         if (!webhook) {
-            showToast("Could not read this webhook", "failure");
+            showToast({ text: "Could not read this webhook", variant: "critical" });
             return;
         }
 

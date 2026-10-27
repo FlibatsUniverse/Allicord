@@ -373,7 +373,7 @@ export default definePlugin({
     toolboxActions: {
         async "Refetch Badges"() {
             await refreshBadges(true);
-            showToast("Successfully refetched badges!", "success");
+            showToast({ text: "Successfully refetched badges!", variant: "success" });
         }
     },
     getBadges(profile: { userId: string; guildId: string; }) {

@@ -46,7 +46,7 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
         const wasEnabled = isEnabled();
 
         if (!wasEnabled && isPluginConflicted(plugin.name)) {
-            showToast(`${plugin.name} conflicts with a required plugin and can't be enabled`, "failure", { position: ToastPosition.BOTTOM });
+            showToast({ text: `${plugin.name} conflicts with a required plugin and can't be enabled`, variant: "critical", position: "bottom" });
             return;
         }
 

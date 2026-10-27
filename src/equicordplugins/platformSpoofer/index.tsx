@@ -97,7 +97,7 @@ function PlatformSubMenu() {
                     action={() => {
                         if (platform === value) return;
                         settings.store.platform = value;
-                        showToast("Restart Discord to show up as " + label, "message");
+                        showToast({ text: "Restart Discord to show up as " + label });
                     }}
                 />
             ))}

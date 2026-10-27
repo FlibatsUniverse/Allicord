@@ -41,7 +41,6 @@
         "eslint-plugin-simple-header": "^1.2.1",
         "eslint-plugin-simple-import-sort": "^13.0.0",
         "eslint-plugin-unused-imports": "^4.4.1",
-        "highlight.js": "11.11.1",
         "html-minifier-terser": "^7.2.0",
         "md5": "^2.3.0",
         "moment": "^2.22.2",
@@ -78,7 +77,6 @@
         "@types/lodash": "4.17.19",
         "@types/node": "^26.0.1",
         "@vencord/discord-types": "^1.0.2",
-        "highlight.js": "11.11.1",
         "moment": "^2.22.2",
         "ts-pattern": "^5.6.0",
         "type-fest": "^5.7.0",
@@ -589,8 +587,6 @@
     "hashery": ["hashery@1.5.1", "", { "dependencies": { "hookified": "^1.15.0" } }, "sha512-iZyKG96/JwPz1N55vj2Ie2vXbhu440zfUfJvSwEqEbeLluk7NnapfGqa7LH0mOsnDxTF85Mx8/dyR6HfqcbmbQ=="],
 
     "hasown": ["hasown@2.0.4", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A=="],
-
-    "highlight.js": ["highlight.js@11.11.1", "", {}, "sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w=="],
 
     "hookified": ["hookified@1.15.1", "", {}, "sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg=="],
 

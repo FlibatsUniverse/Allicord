@@ -431,7 +431,7 @@ export default definePlugin({
     toolboxActions: {
         async "Check For Quests"() {
             await refresh();
-            showToast("Checked for new quests", "success");
+            showToast({ text: "Checked for new quests", variant: "success" });
         }
     },
     start() {
