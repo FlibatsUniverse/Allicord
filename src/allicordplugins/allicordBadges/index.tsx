@@ -317,7 +317,7 @@ export default definePlugin({
     tags: ["Appearance"],
     authors: [
         AllicordDevs.Flibat,
-        Devs.Megu, Devs.Ven, Devs.TheSun,
+        Devs.Megu, Devs.Ven, Devs.TheSun, Devs.kaxtusik,
         Devs.HypedDomi, EquicordDevs.Wolfie, Devs.thororen
     ],
     required: true,
