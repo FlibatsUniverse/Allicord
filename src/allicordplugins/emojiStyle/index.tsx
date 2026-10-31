@@ -7,7 +7,6 @@
 import { definePluginSettings } from "@api/Settings";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
-import { EmojiUtils } from "@webpack/common";
 
 const STYLES = [
     "apple", "google", "samsung", "microsoft-3D-fluent", "microsoft", "whatsapp", "twitter", "facebook",
@@ -20,11 +19,10 @@ const settings = definePluginSettings({
     style: {
         type: OptionType.SELECT,
         description: "Which emoji style to show.",
+        restartNeeded: true,
         options: STYLES.map(style => ({ label: style, value: style, default: style === "apple" }))
     }
 });
-
-let originalGetURL: typeof EmojiUtils.getURL;
 
 export default definePlugin({
     name: "EmojiStyle",
@@ -32,14 +30,17 @@ export default definePlugin({
     authors: [AllicordDevs.coolpixels],
     settings,
 
-    start() {
-        originalGetURL = EmojiUtils.getURL;
-        EmojiUtils.getURL = (emoji: unknown) => typeof emoji === "string"
-            ? `https://emoji.coolpixels.net/${encodeURIComponent(emoji)}?style=${settings.store.style}`
-            : originalGetURL(emoji);
-    },
+    patches: [
+        {
+            find: '"no emoji for"',
+            replacement: {
+                match: /(?<=function \i\(\i\)\{if\(\i\.has\(\i\)\)return"";)/,
+                replace: "return $self.getURL(arguments[0]);"
+            }
+        }
+    ],
 
-    stop() {
-        EmojiUtils.getURL = originalGetURL;
+    getURL(emoji: string) {
+        return `https://emoji.coolpixels.net/${encodeURIComponent(emoji)}?style=${settings.store.style}`;
     }
 });
