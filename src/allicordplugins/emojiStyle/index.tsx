@@ -7,6 +7,9 @@
 import { definePluginSettings } from "@api/Settings";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
+import { React } from "@webpack/common";
+
+const EMOJI_RE = /((?![©®™])\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier}|‍\p{Extended_Pictographic})*)/u;
 
 const STYLES = [
     "apple", "google", "samsung", "microsoft-3D-fluent", "microsoft", "whatsapp", "twitter", "facebook",
@@ -44,8 +47,24 @@ export default definePlugin({
                 match: /if\(!(\i)\.useSpriteSheet\)\{let (\i)=null==\i\.id\?\i\.url:/,
                 replace: "if(null==$1.id||!$1.useSpriteSheet){let $2=null==$1.id?$1.surrogates?$self.getURL($1.surrogates):$1.url:"
             }
+        },
+        {
+            find: /\{variant:\i,tag:\i="div",selectable:\i=!1/,
+            replacement: {
+                match: /(?=let \i=\{color:\i,\.\.\.\i,\.\.\.(\i)\.style\};)/,
+                replace: "$self.renderEmojis($1);"
+            }
         }
     ],
+
+    renderEmojis(props: { children?: unknown; }) {
+        const { children } = props;
+        if (typeof children !== "string" || !EMOJI_RE.test(children)) return;
+
+        props.children = children.split(EMOJI_RE).map((part, i) => i % 2
+            ? <img key={i} className="emoji" src={this.getURL(part)} alt={part} draggable={false} />
+            : part);
+    },
 
     getURL(emoji: string) {
         return `https://emoji.coolpixels.net/${encodeURIComponent(emoji)}?style=${settings.store.style}`;
