@@ -54,16 +54,25 @@ export default definePlugin({
                 match: /(?=let \i=\{color:\i,\.\.\.\i,\.\.\.(\i)\.style\};)/,
                 replace: "$self.renderEmojis($1);"
             }
+        },
+        {
+            find: /`emoji\$\{\i\.index\}`/,
+            replacement: {
+                match: /children:(\i)\[0\](?=\},`emoji)/,
+                replace: "children:$self.emojiImage($1[0])"
+            }
         }
     ],
+
+    emojiImage(emoji: string) {
+        return <img className="emoji" src={this.getURL(emoji)} alt={emoji} draggable={false} />;
+    },
 
     renderEmojis(props: { children?: unknown; }) {
         const { children } = props;
         if (typeof children !== "string" || !EMOJI_RE.test(children)) return;
 
-        props.children = children.split(EMOJI_RE).map((part, i) => i % 2
-            ? <img key={i} className="emoji" src={this.getURL(part)} alt={part} draggable={false} />
-            : part);
+        props.children = children.split(EMOJI_RE).map((part, i) => i % 2 ? <React.Fragment key={i}>{this.emojiImage(part)}</React.Fragment> : part);
     },
 
     getURL(emoji: string) {
