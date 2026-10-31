@@ -48,7 +48,7 @@ export default definePlugin({
             }
         },
         {
-            find: '"data-slate-placeholder"',
+            find: '"data-slate-placeholder":"true"',
             replacement: {
                 match: /(?<="data-slate-placeholder":"true",children:)\i/,
                 replace: "$self.emojiText($&)"
