@@ -35,6 +35,13 @@ export default definePlugin({
 
     patches: [
         {
+            find: '"data-slate-placeholder"',
+            replacement: {
+                match: /(?<="data-slate-placeholder":"true",children:)\i/,
+                replace: "$self.emojiText($&)"
+            }
+        },
+        {
             find: '"no emoji for"',
             replacement: {
                 match: /(?<=function \i\(\i\)\{if\(\i\.has\(\i\)\)return"";)/,
@@ -68,11 +75,14 @@ export default definePlugin({
         return <img className="emoji" src={this.getURL(emoji)} alt={emoji} draggable={false} />;
     },
 
-    renderEmojis(props: { children?: unknown; }) {
-        const { children } = props;
-        if (typeof children !== "string" || !EMOJI_RE.test(children)) return;
+    emojiText(text: unknown) {
+        if (typeof text !== "string" || !EMOJI_RE.test(text)) return text;
 
-        props.children = children.split(EMOJI_RE).map((part, i) => i % 2 ? <React.Fragment key={i}>{this.emojiImage(part)}</React.Fragment> : part);
+        return text.split(EMOJI_RE).map((part, i) => i % 2 ? <React.Fragment key={i}>{this.emojiImage(part)}</React.Fragment> : part);
+    },
+
+    renderEmojis(props: { children?: unknown; }) {
+        props.children = this.emojiText(props.children);
     },
 
     getURL(emoji: string) {
