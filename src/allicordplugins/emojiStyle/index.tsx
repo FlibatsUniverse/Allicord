@@ -37,6 +37,13 @@ export default definePlugin({
                 match: /(?<=function \i\(\i\)\{if\(\i\.has\(\i\)\)return"";)/,
                 replace: "return $self.getURL(arguments[0]);"
             }
+        },
+        {
+            find: ".useSpriteSheet){let",
+            replacement: {
+                match: /if\(!(\i)\.useSpriteSheet\)\{let (\i)=null==\i\.id\?\i\.url:/,
+                replace: "if(null==$1.id||!$1.useSpriteSheet){let $2=null==$1.id?$1.surrogates?$self.getURL($1.surrogates):$1.url:"
+            }
         }
     ],
 
