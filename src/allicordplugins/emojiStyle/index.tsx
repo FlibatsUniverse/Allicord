@@ -11,6 +11,12 @@ import { React } from "@webpack/common";
 
 const EMOJI_RE = /((?![©®™])\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier}|‍\p{Extended_Pictographic})*)/u;
 
+interface FragmentNode {
+    type: unknown;
+    key: string | null;
+    props: { children?: unknown; };
+}
+
 const STYLES = [
     "apple", "google", "samsung", "microsoft-3D-fluent", "microsoft", "whatsapp", "twitter", "facebook",
     "huawei", "joypixels", "lg", "telegram", "animated-noto-color-emoji", "microsoft-teams", "skype",
@@ -83,6 +89,12 @@ export default definePlugin({
     },
 
     emojiText(text: unknown): unknown {
+        if (typeof text === "object" && text !== null && (text as FragmentNode).type === React.Fragment) {
+            const { key, props } = text as FragmentNode;
+            const children = this.emojiText(props.children);
+            return children === props.children ? text : <React.Fragment key={key}>{children as React.ReactNode}</React.Fragment>;
+        }
+
         if (Array.isArray(text)) {
             const parts = text.map(part => this.emojiText(part));
             return parts.some((part, i) => part !== text[i]) ? parts : text;
