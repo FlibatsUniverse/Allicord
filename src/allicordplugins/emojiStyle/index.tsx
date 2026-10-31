@@ -28,7 +28,7 @@ let originalGetURL: typeof EmojiUtils.getURL;
 
 export default definePlugin({
     name: "EmojiStyle",
-    description: "Replaces Discord's emojis with a style from emoji.coolpixels.net.",
+    description: "Replaces Discord's emojis with the emoji style of your choice.",
     authors: [AllicordDevs.coolpixels],
     settings,
 
