@@ -22,7 +22,7 @@ import { Card } from "@components/Card";
 import { Divider } from "@components/Divider";
 import { Flex } from "@components/Flex";
 import { FormSwitch } from "@components/FormSwitch";
-import { Heading, HeadingSecondary } from "@components/Heading";
+import { Heading } from "@components/Heading";
 import { Link } from "@components/Link";
 import { Paragraph } from "@components/Paragraph";
 import { SettingsTab, wrapTab } from "@components/settings/tabs/BaseTab";
@@ -49,7 +49,7 @@ function EquibopSection() {
     return (
         <Flex className={Margins.bottom20} flexDirection="column" gap="1em">
             <Card variant="brand">
-                <HeadingSecondary>Equibop & Allicord</HeadingSecondary>
+                <Heading tag="h3" className={Margins.bottom8}>Equibop & Allicord</Heading>
                 <Paragraph>Equibop and Allicord are two separate things. This updater is for Allicord.</Paragraph>
                 <Paragraph className={Margins.top8}>
                     You receive separate popups for Equibop updates. You can also manually update by installing the <Link href="https://equibop.org/install">latest version</Link>.
@@ -58,7 +58,7 @@ function EquibopSection() {
 
             {isEquibopOutdated && (
                 <Card variant="warning">
-                    <HeadingSecondary>Equibop Outdated</HeadingSecondary>
+                    <Heading tag="h3" className={Margins.bottom8}>Equibop Outdated</Heading>
                     <Flex flexDirection="column" gap="0.5em">
                         <Paragraph>Your version of Equibop is outdated!</Paragraph>
                         <Button variant="link" onClick={() => VesktopNative.app.openUpdater()}>Open Equibop Updater</Button>

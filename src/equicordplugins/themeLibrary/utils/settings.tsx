@@ -6,13 +6,14 @@
 
 import * as DataStore from "@api/DataStore";
 import { definePluginSettings } from "@api/Settings";
-import { HeadingSecondary } from "@components/Heading";
+import { Button } from "@components/Button";
+import { Heading } from "@components/Heading";
 import { OpenExternalIcon } from "@components/Icons";
 import { Paragraph } from "@components/Paragraph";
 import { copyToClipboard } from "@utils/clipboard";
 import { classNameFactory } from "@utils/css";
 import { OptionType } from "@utils/types";
-import { Button, showToast } from "@webpack/common";
+import { showToast } from "@webpack/common";
 
 import { authorizeUser, deauthorizeUser } from "./auth";
 
@@ -51,7 +52,7 @@ export const settings = definePluginSettings({
 
             return (
                 <section>
-                    <HeadingSecondary style={{ marginTop: 0, marginBottom: 8 }}>ThemeLibrary Auth</HeadingSecondary>
+                    <Heading tag="h3" style={{ marginTop: 0, marginBottom: 8 }}>ThemeLibrary Auth</Heading>
                     <div className={cl("button-grid")}>
                         <Button onClick={() => authorizeUser()}>
                             Authorize with ThemeLibrary
@@ -59,11 +60,11 @@ export const settings = definePluginSettings({
                         <Button onClick={handleClick}>
                             Copy ThemeLibrary Token
                         </Button>
-                        <Button color={Button.Colors.RED} onClick={() => deauthorizeUser()}>
+                        <Button variant="dangerPrimary" onClick={() => deauthorizeUser()}>
                             Deauthorize ThemeLibrary
                         </Button>
                     </div>
-                    <HeadingSecondary style={{ marginTop: 8, marginBottom: 8 }}>Theme Removal</HeadingSecondary>
+                    <Heading tag="h3" style={{ marginTop: 8, marginBottom: 8 }}>Theme Removal</Heading>
                     <Paragraph style={{ marginTop: 0, marginBottom: 8 }}> All Theme Authors are given credit in the theme info, no source has been modified, if you wish your theme to be removed anyway, open an Issue by clicking below.</Paragraph>
                     <div className={cl("button-grid")}>
                         <Button onClick={() => VencordNative.native.openExternal("https://github.com/Faf4a/plugins/issues/new?labels=removal&projects=&template=request_removal.yml&title=Theme+Removal")}>

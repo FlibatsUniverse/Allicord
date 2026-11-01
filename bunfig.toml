@@ -1,6 +1,7 @@
 [install]
 # Wait a week before installing a new release
 minimumReleaseAge = 604800
+minimumReleaseAgeExcludes = ["@vencord/monaco-editor", "@song-spotlight/api"]
 
 [run]
 # Run package scripts and binaries with Bun instead of Node
