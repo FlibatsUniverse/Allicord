@@ -41,6 +41,13 @@ export default definePlugin({
 
     patches: [
         {
+            find: /\$b:\(\i,\i\)=>\(0,\i\.jsx\)\("strong"/,
+            replacement: {
+                match: /(?<=\$b:\(\i,\i\)=>\(0,\i\.jsx\)\("strong",\{children:)\i/,
+                replace: "$self.emojiText($&)"
+            }
+        },
+        {
             find: /let\{ref:\i,children:\i,className:\i,color:\i,roleColors:/,
             replacement: {
                 match: /(?<=\)\{)(?=let\{ref:\i,children:\i,className:\i,color:\i,roleColors:)/,
