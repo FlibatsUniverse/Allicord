@@ -53,6 +53,13 @@ export default definePlugin({
 
     patches: [
         {
+            find: /function \i\(\i\)\{let \i=\i\(\i\)\?\.names\[0\];return null!=\i\?\{type:"emoji",surrogate:/,
+            replacement: {
+                match: /(?<=function \i\((\i)\)\{let \i=)(\i)\(\1\)(?=\?\.names\[0\];return null!=\i\?\{type:"emoji")/,
+                replace: "($2($1)??$2($1.replace(/\\uFE0F/g,\"\")))"
+            }
+        },
+        {
             find: /renderLeaf\(\i\)\{let\{editor:\i,renderExtraLeaf:/,
             replacement: [
                 {
