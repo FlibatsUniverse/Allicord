@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/github/package-json/v/FlibatsUniverse/Allicord?style=for-the-badge&logo=github&logoColor=caa7f5&label=&color=caa7f5&labelColor=101018)](https://github.com/FlibatsUniverse/Allicord/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/FlibatsUniverse/Allicord/build.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=caa7f5&label=Build&labelColor=101018)](https://github.com/FlibatsUniverse/Allicord/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-GPL--3.0--or--later-caa7f5?style=for-the-badge&logo=gnu&logoColor=caa7f5&labelColor=101018)](LICENSE)
-[![Allidroid](https://img.shields.io/badge/Allidroid-Coming_soon-caa7f5?style=for-the-badge&logo=android&logoColor=caa7f5&labelColor=101018)](https://github.com/FlibatsUniverse/Allidroid)
 [![Discord](https://img.shields.io/badge/Discord-Join-caa7f5?style=for-the-badge&logo=discord&logoColor=caa7f5&labelColor=101018)](https://discord.com/invite/XszKXdqaZP)
 
 The undisputed cutest Discord client mod
@@ -21,10 +20,6 @@ The undisputed cutest Discord client mod
 - Settings sync: keep your plugins and their settings in step between devices and apps (optional)
 - Mobile: Allidroid, the mobile version of Allicord, is coming soon
 
-## Mobile
-
-[Allidroid](https://github.com/FlibatsUniverse/Allidroid) is the mobile version of Allicord and is coming soon. [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager) installs and updates it on Android.
-
 ## Installing, repairing and uninstalling
 
 Download the installer for your platform. The Windows x64 download is an unsigned **graphical installer** adapted from the Vencord Installer. Windows users can double-click the .exe, select their Discord installation, and choose Install, Repair or Uninstall. Close Discord before making changes, then restart it afterward. Installation and uninstallation are tested with simulated Discord files; live Discord and cross-platform runtime validation remain ongoing.
@@ -38,6 +33,8 @@ Download the installer for your platform. The Windows x64 download is an unsigne
 
 On macOS and Linux, run `chmod +x` on the downloaded file and launch it from your terminal. `--help` lists the options, including `--install`, `--repair` and `--uninstall`. The installer downloads Allicord's own client bundle and verifies its SHA-256 checksum before replacing an existing build. Existing installations are identified by the actual client loaded by Discord, so other client mods are labeled by their own name. Allicord uses a separate data folder and client bundle; installing it replaces the modification only in the selected Discord installation. Previous Allicord settings stored in the old shared Equicord folder, and settings exported from Vencord, can be transferred with settings export/import.
 
+On mobile, use [Allidroid](https://github.com/FlibatsUniverse/Allidroid), the mobile version of Allicord, which is coming soon. [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager) installs and updates it, and you can download it below.
+
 ## Browser and client downloads
 
 | Download              | Link                                                                                                       |
@@ -47,6 +44,7 @@ On macOS and Linux, run `chmod +x` on the downloaded file and launch it from you
 | Userscript            | [Allicord.user.js](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord.user.js)  |
 | Desktop client bundle | [ASAR](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-desktop.asar)         |
 | Equibop client bundle | [ASAR](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-equibop.asar)         |
+| Mobile installer      | [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager/releases/latest)                   |
 | Source code           | [Archive](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/Allicord-source.tar.gz)     |
 | Checksums             | [SHA256SUMS](https://github.com/FlibatsUniverse/Allicord/releases/latest/download/SHA256SUMS)              |
 
