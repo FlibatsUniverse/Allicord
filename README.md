@@ -18,7 +18,7 @@ The undisputed cutest Discord client mod
 - Privacy friendly: blocks Discord analytics and crash reporting out of the box and has no telemetry
 - Update channels: stay on stable releases, or follow the `dev` and `dev2` builds
 - Settings sync: keep your plugins and their settings in step between devices and apps (optional)
-- Mobile: Allidroid, the mobile version of Allicord, is coming soon
+- Mobile: Allidroid, the mobile version of Allicord, is out on Android, with iOS coming soon
 
 ## Installing, repairing and uninstalling
 
@@ -33,7 +33,7 @@ Download the installer for your platform. The Windows x64 download is an unsigne
 
 On macOS and Linux, run `chmod +x` on the downloaded file and launch it from your terminal. `--help` lists the options, including `--install`, `--repair` and `--uninstall`. The installer downloads Allicord's own client bundle and verifies its SHA-256 checksum before replacing an existing build. Existing installations are identified by the actual client loaded by Discord, so other client mods are labeled by their own name. Allicord uses a separate data folder and client bundle; installing it replaces the modification only in the selected Discord installation. Previous Allicord settings stored in the old shared Equicord folder, and settings exported from Vencord, can be transferred with settings export/import.
 
-On mobile, use [Allidroid](https://github.com/FlibatsUniverse/Allidroid), the mobile version of Allicord, which is coming soon. [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager) installs and updates it, and you can download it below.
+On mobile, use [Allidroid](https://github.com/FlibatsUniverse/Allidroid), the mobile version of Allicord, which is out on Android, with iOS coming soon. [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager) installs and updates it, and you can download it below.
 
 ## Browser and client downloads
 
