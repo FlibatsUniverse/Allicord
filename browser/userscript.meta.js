@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Allicord
-// @description     The softest Discord client mod - Web version
+// @description     The undisputed cutest Discord client mod - Web version
 // @version         %version%
 // @author          ItzFlibat (https://github.com/ItzFlibat)
 // @namespace       https://github.com/FlibatsUniverse/Allicord
@@ -20,7 +20,6 @@
 // @compatible      edge Edge + Tampermonkey or Violentmonkey
 // @compatible      safari Safari + Tampermonkey or Violentmonkey
 // ==/UserScript==
-
 
 // this UserScript DOES NOT work on Firefox with Violentmonkey or Greasemonkey due to a bug that makes it impossible
 // to overwrite stuff on the window on sites that use CSP. Use Tampermonkey or use a chromium based browser

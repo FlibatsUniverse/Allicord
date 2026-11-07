@@ -2,6 +2,8 @@
 
 Allicord is a genuine GitHub fork of Equicord, with Vencord as the root source. Upstream APIs, renderer globals, plugin directories, protocols and settings formats remain compatible. Copyright notices and GPL licensing are preserved.
 
+Allicord is one of three Alliance repositories. Allicord is the desktop and web client. [Allidroid](https://github.com/FlibatsUniverse/Allidroid) is the mobile version, and [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager) is the app that installs and updates it. Each repository is built, versioned and released on its own.
+
 Alliance plugins live in src/allicordplugins/, with renderer discovery, native companions and combined plugin catalog integration. They use the existing PluginManager and Settings APIs. Original Equicord/Vencord plugin and contributor identities remain intact.
 
 main is stable Allicord and the default branch. dev is development. Every push to main/dev runs client validation and installer tests/builds. Only successful main push runs can trigger automatic stable publication.

@@ -4,12 +4,24 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import "./style.css";
+
 import { definePluginSettings } from "@api/Settings";
 import { AllicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { React } from "@webpack/common";
 
 const EMOJI_RE = /((?![©®™])\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier}|‍\p{Extended_Pictographic})*)/u;
+
+const EMOJI_RE_GLOBAL = new RegExp(EMOJI_RE.source, "gu");
+
+interface SlateRange {
+    anchor: { path: number[]; offset: number; };
+    focus: { path: number[]; offset: number; };
+    emojiStyle?: string;
+}
+
+type SlateDecorate = (entry: [{ text?: unknown; }, number[]]) => SlateRange[] | undefined;
 
 interface FragmentNode {
     type: unknown;
@@ -40,6 +52,33 @@ export default definePlugin({
     settings,
 
     patches: [
+        {
+            find: /function \i\(\i\)\{let \i=\i\(\i\)\?\.names\[0\];return null!=\i\?\{type:"emoji",surrogate:/,
+            replacement: {
+                match: /(?<=function \i\((\i)\)\{let \i=)(\i)\(\1\)(?=\?\.names\[0\];return null!=\i\?\{type:"emoji")/,
+                replace: "($2($1)??$2($1.replace(/\\uFE0F/g,\"\")))"
+            }
+        },
+        {
+            find: /renderLeaf\(\i\)\{let\{editor:\i,renderExtraLeaf:/,
+            replacement: [
+                {
+                    match: /(?<=renderLeaf\((\i)\)\{)(?=let\{editor:\i,renderExtraLeaf:)/,
+                    replace: "return $self.wrapLeaf($1,this.renderLeafOriginal($1))}renderLeafOriginal($1){"
+                },
+                {
+                    match: /decorate:(\i),renderElement:this\.renderElement,renderLeaf:this\.renderLeaf/,
+                    replace: "decorate:$self.decorate($1),renderElement:this.renderElement,renderLeaf:this.renderLeaf"
+                }
+            ]
+        },
+        {
+            find: /\$b:\(\i,\i\)=>\(0,\i\.jsx\)\("strong"/,
+            replacement: {
+                match: /(?<=\$b:\(\i,\i\)=>\(0,\i\.jsx\)\("strong",\{children:)\i/,
+                replace: "$self.emojiText($&)"
+            }
+        },
         {
             find: /let\{ref:\i,children:\i,className:\i,color:\i,roleColors:/,
             replacement: {
@@ -83,6 +122,29 @@ export default definePlugin({
             }
         }
     ],
+
+    decorate(original?: SlateDecorate): SlateDecorate {
+        return entry => {
+            const ranges = original?.(entry) ?? [];
+            const [node, path] = entry;
+            if (typeof node.text !== "string") return ranges;
+
+            for (const match of node.text.matchAll(EMOJI_RE_GLOBAL)) {
+                ranges.push({
+                    anchor: { path, offset: match.index },
+                    focus: { path, offset: match.index + match[0].length },
+                    emojiStyle: match[0]
+                });
+            }
+            return ranges;
+        };
+    },
+
+    wrapLeaf({ leaf }: { leaf: { emojiStyle?: string; }; }, rendered: React.ReactNode) {
+        return leaf.emojiStyle
+            ? <span className="vc-emoji-style" style={{ backgroundImage: `url("${this.getURL(leaf.emojiStyle)}")` }}>{rendered}</span>
+            : rendered;
+    },
 
     emojiImage(emoji: string) {
         return <img className="emoji" src={this.getURL(emoji)} alt={emoji} draggable={false} />;

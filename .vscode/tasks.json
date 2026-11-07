@@ -5,6 +5,7 @@
     "tasks": [
         {
             "label": "Build",
+            "detail": "Build vencord in development mode",
             "type": "shell",
             "command": "bun run build",
             "group": {
@@ -26,7 +27,8 @@
             }
         },
         {
-            "label": "Build Dev",
+            "label": "Reporter",
+            "detail": "Build with the reporter that will test all patches and finds, then report errors to console",
             "type": "shell",
             "command": "bun run build --dev",
             "group": "build"
@@ -52,6 +54,7 @@
         },
         {
             "label": "Watch",
+            "detail": "Build and watch for changes",
             "type": "shell",
             "command": "bun run watch",
             "problemMatcher": [],
