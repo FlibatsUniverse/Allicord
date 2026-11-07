@@ -46,6 +46,11 @@ function BackupAndRestoreTab() {
                 • DataStore Data
             </Paragraph>
 
+            <Heading>Settings from other apps</Heading>
+            <Paragraph className={Margins.bottom20}>
+                You can also import settings from Allidroid or from another client mod. Allicord reads what it understands, such as which plugins are on, theme links and custom CSS, and leaves the rest.
+            </Paragraph>
+
             <Divider className={Margins.bottom20} />
 
             <Heading>Import Settings</Heading>
