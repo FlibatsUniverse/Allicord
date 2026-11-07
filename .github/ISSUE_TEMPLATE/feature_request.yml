@@ -8,8 +8,9 @@ body:
       attributes:
           value: |
               This form is not for any of the following:
-              - Plugin requests - Go to our [Discord server](https://github.com/FlibatsUniverse/Allicord/issues) for that
-              - Feature requests for plugins - Go to our [Discord server](https://github.com/FlibatsUniverse/Allicord/issues) for that
+              - Plugin requests - Go to our [Discord server](https://discord.com/invite/XszKXdqaZP) for that
+              - Feature requests for plugins - Go to our [Discord server](https://discord.com/invite/XszKXdqaZP) for that
+              - Ideas for the mobile version - Use the [Allidroid](https://github.com/FlibatsUniverse/Allidroid/issues) or [Allidroid Manager](https://github.com/FlibatsUniverse/AllidroidManager/issues) repositories
 
     - type: textarea
       id: feature-description

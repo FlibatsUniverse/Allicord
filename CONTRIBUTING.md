@@ -2,7 +2,7 @@
 
 ## Branches and pull requests
 
-main is the stable Allicord branch. upstream mirrors Equicord/Equicord:main without Allicord commits. Create feature branches from dev and target dev, then promote validated changes into main. Never force-push main, dev or upstream, and never rewrite inherited history. Every main push is automatically released only after the full Allicord Build workflow succeeds.
+main is the stable Allicord branch. Create feature branches from dev and target dev, then promote validated changes into main. Never force-push main or dev, and never rewrite inherited history. Every main push is automatically released only after the full Allicord Build workflow succeeds.
 
 ## Conventional Commits
 

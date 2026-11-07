@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-    - name: Alliance projects
-      url: https://github.com/FlibatsUniverse/Allicord/issues
-      about: Explore Alliance projects and development.
-    - name: 🔌 Plugin Requests
-      url: https://github.com/FlibatsUniverse/Allicord/issues
-      about: Discuss Allicord plugin requests in this repository.
     - name: ❓ Support & Questions
-      url: https://github.com/FlibatsUniverse/Allicord/issues
-      about: Ask Allicord questions in this repository.
+      url: https://discord.com/invite/XszKXdqaZP
+      about: Ask questions and get help in our Discord server.
+    - name: 📱 Allidroid
+      url: https://github.com/FlibatsUniverse/Allidroid/issues
+      about: Report problems with Allidroid, the mobile version of Allicord.
+    - name: 🛠️ Allidroid Manager
+      url: https://github.com/FlibatsUniverse/AllidroidManager/issues
+      about: Report problems with the Android app that installs Allidroid.
