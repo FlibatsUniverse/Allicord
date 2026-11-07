@@ -6,7 +6,7 @@
 
 import "./VencordTab.css";
 
-import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/allicordBadges/donors";
+import { getEquicordDonorBadges, getVencordDonorBadges } from "@allicordplugins/alliBadges/donors";
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { useSettings } from "@api/Settings";
 import { Button } from "@components/Button";

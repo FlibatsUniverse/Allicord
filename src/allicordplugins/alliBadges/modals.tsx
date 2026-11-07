@@ -81,6 +81,15 @@ export function BotModal(apiOrigin: string) {
     });
 }
 
+export function AllidroidContributorModal(apiOrigin: string) {
+    openBadgeModal({
+        title: "Allidroid Contributor",
+        images: [`${apiOrigin}/v1/alliance/badges/assets/allicord/allidroid.svg`],
+        text: ["This badge is granted to people who have contributed to Allidroid, the mobile version of Allicord."],
+        action: <Button onClick={() => VencordNative.native.openExternal("https://github.com/FlibatsUniverse/Allidroid")}>View Allidroid</Button>
+    });
+}
+
 export function AllicordDonorModal(apiOrigin: string) {
     openBadgeModal({
         title: "Allicord Donor",
