@@ -9,9 +9,14 @@ import { Logger } from "@utils/Logger";
 import { chooseFile, saveFile } from "@utils/web";
 import { moment, showToast } from "@webpack/common";
 
+import plugins from "~plugins";
+
 import { DataStore } from "..";
+import { detectSettings, isEmptyPlan } from "./detect";
 
 type BackupType = "all" | "plugins" | "css" | "datastore";
+
+const ALLIDROID_KEY = "Allicord:allidroid";
 
 const toastSuccess = () =>
     showToast({ text: "Settings successfully imported. Restart to apply changes!", variant: "success" });
@@ -52,6 +57,36 @@ function isSafeObject(obj: any) {
     return true;
 }
 
+async function importOtherSettings(parsed: any, type: BackupType) {
+    const plan = detectSettings(parsed);
+    if (isEmptyPlan(plan)) throw new Error("Nothing in this file can be imported into Allicord.");
+
+    // Kept as it is so exporting from Allicord later hands it back to Allidroid unchanged.
+    if (plan.allidroid) await DataStore.set(ALLIDROID_KEY, plan.allidroid);
+
+    if (type === "all" || type === "plugins") {
+        const byName = new Map(Object.keys(plugins).map(name => [name.toLowerCase(), name]));
+        for (const { name, enabled } of plan.pluginStates) {
+            const key = byName.get(name.toLowerCase());
+            if (!key) continue;
+            const entry = (PlainSettings.plugins[key] ??= { enabled: false } as any);
+            entry.enabled = enabled;
+        }
+        for (const link of plan.themeLinks) {
+            if (/\.css(\?|#|$)/i.test(link) && !PlainSettings.themeLinks.includes(link)) PlainSettings.themeLinks.push(link);
+        }
+        await VencordNative.settings.set(PlainSettings);
+    }
+
+    if ((type === "all" || type === "css") && plan.customCss) {
+        const current = await VencordNative.quickCss.get();
+        await VencordNative.quickCss.set(`${current}
+
+/* Imported */
+${plan.customCss}`);
+    }
+}
+
 export async function importSettings(data: string, type: BackupType = "all", cloud = false) {
     try {
         var parsed = JSON.parse(data);
@@ -62,6 +97,14 @@ export async function importSettings(data: string, type: BackupType = "all", clo
 
     if (!isSafeObject(parsed))
         throw new Error("Unsafe Settings");
+
+    // Anything that is not an Allicord backup, including Allidroid backups and settings from other client mods.
+    const isOwnBackup = parsed != null && typeof parsed === "object" && !Array.isArray(parsed) && !parsed.allidroid
+        && ("settings" in parsed || "quickCss" in parsed || "dataStore" in parsed);
+    if (!isOwnBackup) {
+        await importOtherSettings(parsed, type);
+        return;
+    }
 
     switch (type) {
         case "all": {
@@ -101,6 +144,7 @@ export async function importSettings(data: string, type: BackupType = "all", clo
 export async function exportSettings({ syncDataStore = true, type = "all", minify }: { syncDataStore?: boolean; type?: BackupType; minify?: boolean; }) {
     const settings = VencordNative.settings.get();
     const quickCss = await VencordNative.quickCss.get();
+    const allidroid = await DataStore.get(ALLIDROID_KEY);
     let dataStore: any;
 
     if (syncDataStore) {
@@ -121,10 +165,10 @@ export async function exportSettings({ syncDataStore = true, type = "all", minif
 
     switch (type) {
         case "all": {
-            return JSON.stringify({ settings, quickCss, ...(dataStore && { dataStore }) }, null, minify ? undefined : 4);
+            return JSON.stringify({ settings, quickCss, ...(dataStore && { dataStore }), ...(allidroid && { allidroid }) }, null, minify ? undefined : 4);
         }
         case "plugins": {
-            return JSON.stringify({ settings }, null, minify ? undefined : 4);
+            return JSON.stringify({ settings, ...(allidroid && { allidroid }) }, null, minify ? undefined : 4);
         }
         case "css": {
             return JSON.stringify({ quickCss }, null, minify ? undefined : 4);
