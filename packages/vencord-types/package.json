@@ -1,33 +1,33 @@
 {
     "name": "@equicord/types",
+    "version": "1.15.18",
     "private": false,
-    "version": "1.15.16",
     "description": "",
-    "types": "index.d.ts",
+    "keywords": [],
+    "license": "GPL-3.0-or-later",
+    "author": "Equicord & Vencord Contributors",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Equicord/Equicord.git",
         "directory": "packages/vencord-types"
     },
+    "types": "index.d.ts",
     "scripts": {
         "prepublishOnly": "tsx ./prepare.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "author": "Equicord & Vencord Contributors",
-    "license": "GPL-3.0-or-later",
-    "devDependencies": {
-        "@types/fs-extra": "^11.0.4",
-        "fs-extra": "^11.3.6",
-        "tsx": "^4.23.15"
-    },
     "dependencies": {
         "@types/node": "^26.0.1",
-        "@vencord/discord-types": "workspace:@equicord/discord-types@^",
+        "@vencord/discord-types": "file:../discord-types",
         "lodash": "^4.18.1",
         "moment": "2.30.1",
         "ts-pattern": "^5.9.0",
         "type-fest": "^5.10.0"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^11.0.4",
+        "fs-extra": "^11.3.6",
+        "tsx": "^4.23.15"
     },
     "peerDependencies": {
         "@types/react": "19.2.3",

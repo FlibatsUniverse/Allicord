@@ -18,7 +18,6 @@
 
 // @ts-check
 
-
 import { exec, execSync } from "child_process";
 import esbuild, { build, context } from "esbuild";
 import { constants as FsConstants, readFileSync } from "fs";

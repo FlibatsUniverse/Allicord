@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { BaseText } from "@components/index";
+import { Text } from "@components/Text";
 import { Native } from "@equicordplugins/songSpotlight.desktop/service";
 import {
     ContainerClasses,
-    DMSideBarClasses,
     OverlayClasses,
     ProfileCardClasses,
     Spinner,
@@ -34,10 +33,9 @@ interface CollapsedProfileSongsProps {
     data?: UserData;
     user: User;
     isSideBar: boolean;
-    isRedesignEnabled?: boolean;
 }
 
-export default function CollapsedProfileSongs({ data, user, isSideBar, isRedesignEnabled = false }: CollapsedProfileSongsProps) {
+export default function CollapsedProfileSongs({ data, user, isSideBar }: CollapsedProfileSongsProps) {
     const [renders, setRenders] = useState(new Map<string, RenderSongInfo>());
     const previews = useMemo(() => data?.slice(0, shownSongs), [data]);
     const userId = user?.id;
@@ -56,7 +54,7 @@ export default function CollapsedProfileSongs({ data, user, isSideBar, isRedesig
         }
     }, [previews]);
 
-    const songsSection = (
+    return (
         <section className={ProfileCardClasses.container}>
             <ul className={ProfileCardClasses.cardsList} tabIndex={-1}>
                 <li className={ProfileCardClasses.firstCardContainer}>
@@ -83,7 +81,7 @@ export default function CollapsedProfileSongs({ data, user, isSideBar, isRedesig
                         }}
                     >
                         <div className={classes(OverlayClasses.overlay, ContainerClasses.innerContainer, ProfileCardClasses.card)}>
-                            <BaseText size={isSideBar ? "sm" : "xs"} weight="medium">Song Spotlight</BaseText>
+                            <Text size={isSideBar ? "sm" : "xs"} weight="medium">Song Spotlight</Text>
                             <div className={ContainerClasses.icons}>
                                 {previews && data
                                     ? previews.map((song, i) => {
@@ -101,7 +99,7 @@ export default function CollapsedProfileSongs({ data, user, isSideBar, isRedesig
                                                 )}
                                                 {extra && (
                                                     <div className={ContainerClasses.displayCountText}>
-                                                        <BaseText size={isSideBar ? "sm" : "xs"} weight="medium">+{data.length - shownSongs}</BaseText>
+                                                        <Text size={isSideBar ? "sm" : "xs"} weight="medium">+{data.length - shownSongs}</Text>
                                                     </div>
                                                 )}
                                             </div>
@@ -115,8 +113,4 @@ export default function CollapsedProfileSongs({ data, user, isSideBar, isRedesig
             </ul>
         </section>
     );
-
-    return isSideBar && !isRedesignEnabled
-        ? <div className={DMSideBarClasses.widgetPreviews}>{songsSection}</div>
-        : songsSection;
 }

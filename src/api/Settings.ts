@@ -46,6 +46,7 @@ export interface Settings {
     showUpdateChannel: boolean;
     useQuickCss: boolean;
     eagerPatches: boolean;
+    enableBackgroundRendering: boolean;
     enabledThemes: string[];
     enabledThemeLinks: string[];
     enableOnlineThemes: boolean;
@@ -112,6 +113,7 @@ const DefaultSettings: Settings = {
     showUpdateChannel: false,
     useQuickCss: true,
     themeLinks: [],
+    enableBackgroundRendering: false,
     eagerPatches: false, // Eagerly patching no longer works due to module factories with the same id being able to have different sources now.
     enabledThemes: [],
     enabledThemeLinks: [],

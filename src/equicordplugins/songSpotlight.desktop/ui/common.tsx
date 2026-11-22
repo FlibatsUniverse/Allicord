@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { BaseText } from "@components/index";
+import { Text } from "@components/Text";
 import { cl } from "@equicordplugins/songSpotlight.desktop/lib/utils";
 import { classes } from "@utils/misc";
 import { findByCodeLazy, findCssClassesLazy } from "@webpack";
@@ -22,7 +22,6 @@ export const ContainerClasses = findCssClassesLazy(
 );
 export const CardClasses = findCssClassesLazy("card", "headerText", "headerContextMenu");
 export const WidgetClasses = findCssClassesLazy("tabPanelScroller", "tabListScroller");
-export const DMSideBarClasses = findCssClassesLazy("widgetPreviews");
 export const ProfileCardClasses = findCssClassesLazy("cardsList", "firstCardContainer", "card", "container");
 
 export enum SpinnerTypes {
@@ -51,14 +50,14 @@ export function ExplicitTag({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
         <Tooltip text="Explicit">
             {tooltipProps => (
-                <BaseText
+                <Text
                     {...tooltipProps}
                     size="xs"
                     weight="medium"
                     className={classes(cl("explicit-tag"), className)}
                 >
                     E
-                </BaseText>
+                </Text>
             )}
         </Tooltip>
     );
