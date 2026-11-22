@@ -52,6 +52,11 @@ const settings = definePluginSettings({
         description: "Hide other users' typing indicators from the members list.",
         default: false,
     },
+    hideDmListTypingIndicators: {
+        type: OptionType.BOOLEAN,
+        description: "Hide typing indicators on conversations in the Direct Messages list.",
+        default: false,
+    },
     chatIcon: {
         type: OptionType.BOOLEAN,
         description: "Show an icon in the chat bar for modifying the plugin on the go.",
@@ -147,14 +152,6 @@ const SilentTypingChatToggle: ChatBarButtonFactory = ({ channel, type }) => {
         enabledGlobally,
         chatIcon,
         defaultHidden,
-        enabledLocations,
-        disabledLocations,
-        alwaysEnableInActiveVoiceChat,
-        temporaryEnableThresholdServers,
-        temporaryEnableThresholdDirectMessages,
-        chatIconLeftClickAction,
-        chatIconMiddleClickAction,
-        chatIconRightClickAction,
     } = settings.use([
         "enabledGlobally",
         "chatIcon",
@@ -325,16 +322,15 @@ const ChatBarContextCheckbox: NavContextMenuPatchCallback = children => {
         chatIcon,
         chatContextMenu,
         enabledGlobally,
-        defaultHidden,
-        hideChatBoxTypingIndicators,
-        hideMembersListTypingIndicators
+        defaultHidden
     } = settings.use([
         "chatIcon",
         "chatContextMenu",
         "enabledGlobally",
         "defaultHidden",
         "hideChatBoxTypingIndicators",
-        "hideMembersListTypingIndicators"
+        "hideMembersListTypingIndicators",
+        "hideDmListTypingIndicators"
     ]);
 
     if (!chatContextMenu) return;
@@ -353,6 +349,8 @@ const ChatBarContextCheckbox: NavContextMenuPatchCallback = children => {
                 action={() => settings.store.hideChatBoxTypingIndicators = !settings.store.hideChatBoxTypingIndicators} />
             <Menu.MenuCheckboxItem id="vc-silent-typing-members-list-indicators" label="Members List Indicators" checked={settings.store.hideMembersListTypingIndicators}
                 action={() => settings.store.hideMembersListTypingIndicators = !settings.store.hideMembersListTypingIndicators} />
+            <Menu.MenuCheckboxItem id="vc-silent-typing-dm-list-indicators" label="DM List Indicators" checked={settings.store.hideDmListTypingIndicators}
+                action={() => settings.store.hideDmListTypingIndicators = !settings.store.hideDmListTypingIndicators} />
             <Menu.MenuCheckboxItem id="vc-silent-typing-chat-icon" label="Chat Icon" checked={chatIcon}
                 action={() => settings.store.chatIcon = !settings.store.chatIcon} />
             <Menu.MenuCheckboxItem id="vc-silent-typing-default" label="Default Hidden" checked={defaultHidden}
@@ -362,13 +360,15 @@ const ChatBarContextCheckbox: NavContextMenuPatchCallback = children => {
 };
 
 function shouldHideChatBarTypingIndicators(): boolean {
-    const { hideChatBoxTypingIndicators } = settings.use(["hideChatBoxTypingIndicators"]);
-    return hideChatBoxTypingIndicators;
+    return settings.use(["hideChatBoxTypingIndicators"]).hideChatBoxTypingIndicators;
 }
 
 function shouldHideMembersListTypingIndicators(): boolean {
-    const { hideMembersListTypingIndicators } = settings.use(["hideMembersListTypingIndicators"]);
-    return hideMembersListTypingIndicators;
+    return settings.use(["hideMembersListTypingIndicators"]).hideMembersListTypingIndicators;
+}
+
+function shouldHideDmListTypingIndicators(): boolean {
+    return settings.use(["hideDmListTypingIndicators"]).hideDmListTypingIndicators;
 }
 
 export default definePlugin({
@@ -382,6 +382,7 @@ export default definePlugin({
 
     shouldHideChatBarTypingIndicators,
     shouldHideMembersListTypingIndicators,
+    shouldHideDmListTypingIndicators,
 
     contextMenus: {
         "textarea-context": ChatBarContextCheckbox
@@ -453,10 +454,17 @@ export default definePlugin({
             ]
         },
         {
-            find: ",{avatarCutoutX",
+            find: "handleSetTypingRef:",
             replacement: {
-                match: /isTyping:(\i)=!1(,typingIndicatorRef:\i,avatarContentRef:)/,
-                replace: "silentTypingIsTyping:$1=$self.shouldHideMembersListTypingIndicators()?false:(arguments[0].isTyping??false)$2"
+                match: /isTyping:(\i)(,avatarDecorationSrc:[^}]{1,60}}=\i)/,
+                replace: "isTyping:vcIsTyping$2,$1=!$self.shouldHideMembersListTypingIndicators()&&vcIsTyping"
+            }
+        },
+        {
+            find: "PrivateChannel.renderAvatar",
+            replacement: {
+                match: /return \i\.isMultiUserDM\(\)\?(?=.{0,60}?isTyping:(\i),)/,
+                replace: "if($self.shouldHideDmListTypingIndicators())$1=false;$&"
             }
         },
     ],
@@ -488,6 +496,12 @@ export default definePlugin({
                 {
                     name: "members-list-indicators",
                     description: "Hide other users' typing indicators from the members list.",
+                    required: false,
+                    type: ApplicationCommandOptionType.BOOLEAN,
+                },
+                {
+                    name: "dm-list-indicators",
+                    description: "Hide typing indicators on conversations in the Direct Messages list.",
                     required: false,
                     type: ApplicationCommandOptionType.BOOLEAN,
                 },
@@ -524,6 +538,20 @@ export default definePlugin({
                         const locationId = location === "guild" ? ctx.channel.guild_id : ctx.channel.id;
                         toggleLocation(locationId, getEffectiveList(), settings.store.defaultHidden);
                     }
+                }
+
+                const hideMembersListTypingIndicators = findOption(args, "members-list-indicators");
+
+                if (typeof hideMembersListTypingIndicators === "boolean") {
+                    updated = true;
+                    settings.store.hideMembersListTypingIndicators = hideMembersListTypingIndicators;
+                }
+
+                const hideDmListTypingIndicators = findOption(args, "dm-list-indicators");
+
+                if (typeof hideDmListTypingIndicators === "boolean") {
+                    updated = true;
+                    settings.store.hideDmListTypingIndicators = hideDmListTypingIndicators;
                 }
 
                 const updateChatIcon = findOption(args, "chat-icon");

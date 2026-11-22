@@ -88,7 +88,12 @@ function AudioBookShelfSettings() {
 
 function TosuSettings() {
     return (
-        <SettingsSection id="tosu-settings" name="" description="Connects to tosu via WebSocket on port 24050. No configuration needed, just make sure tosu is running alongside osu!." />
+        <>
+            <SettingsSection id="tosu-settings" name="" description="Connects to tosu via WebSocket. Just make sure tosu is running alongside osu!." />
+            <TextSetting name="Server URL" description="tosu domain URL." settingsKey="tosu_serverUrl" placeholder="127.0.0.1:24050" />
+            <AllowServerSetting settingsKey="tosu_serverUrl" />
+            <SwitchSetting name="Privacy Mode" description="Hides your username inside the presence." settingsKey="tosu_privacyMode" />
+        </>
     );
 }
 
@@ -156,6 +161,22 @@ function JellyfinSettings() {
             <SwitchSetting name="Show Episode Name" description="Show episode name after season/episode info." settingsKey="jf_showEpisodeName" />
             <SwitchSetting name="Show When Paused" description="Show presence when media is paused." settingsKey="jf_showPausedState" />
             <SwitchSetting name="Privacy Mode" description="Hide media details." settingsKey="jf_privacyMode" />
+        </>
+    );
+}
+
+function PlexSettings() {
+    return (
+        <>
+            <SettingsSection id="plex-settings" name="" description="Show what you're playing on your Plex server. You must be the server owner to see sessions. To get your token, open any item in Plex Web, choose Get Info, then View XML, and copy the X-Plex-Token value from the URL." />
+            <TextSetting name="Server URL" description="Plex server URL." settingsKey="px_serverUrl" placeholder="https://1-2-3-4.abc123.plex.direct:32400" />
+            <AllowServerSetting settingsKey="px_serverUrl" />
+            <TextSetting name="Token" description="Plex token." settingsKey="px_token" placeholder="X-Plex-Token" />
+            <TextSetting name="Username" description="Plex username to show sessions for." settingsKey="px_username" placeholder="Plex username" />
+            <SwitchSetting name="Show Episode Name" description="Show episode name after season/episode info." settingsKey="px_showEpisodeName" />
+            <SwitchSetting name="Show Cover Art" description="Show cover art. Your Plex token is sent to Discord in the image URL." settingsKey="px_showCover" />
+            <SwitchSetting name="Show When Paused" description="Show presence when media is paused." settingsKey="px_showPausedState" />
+            <SwitchSetting name="Privacy Mode" description="Hide media details." settingsKey="px_privacyMode" />
         </>
     );
 }
@@ -238,6 +259,7 @@ const TAB_COMPONENTS: Record<ServiceTab, React.ComponentType> = {
     [ServiceTab.Jellyfin]: JellyfinSettings,
     [ServiceTab.GensokyoRadio]: GensokyoRadioSettings,
     [ServiceTab.Navidrome]: NavidromeSettings,
+    [ServiceTab.Plex]: PlexSettings,
 };
 
 const TAB_LABELS: Record<ServiceTab, string> = {
@@ -247,6 +269,7 @@ const TAB_LABELS: Record<ServiceTab, string> = {
     [ServiceTab.Jellyfin]: "Jellyfin",
     [ServiceTab.GensokyoRadio]: "Gensokyo Radio",
     [ServiceTab.Navidrome]: "Navidrome",
+    [ServiceTab.Plex]: "Plex",
 };
 
 const ENABLE_KEYS: Record<ServiceTab, SettingsKey> = {
@@ -256,6 +279,7 @@ const ENABLE_KEYS: Record<ServiceTab, SettingsKey> = {
     [ServiceTab.Jellyfin]: "jf_enabled",
     [ServiceTab.GensokyoRadio]: "gr_enabled",
     [ServiceTab.Navidrome]: "nd_enabled",
+    [ServiceTab.Plex]: "px_enabled",
 };
 
 const TABS = Object.values(ServiceTab);

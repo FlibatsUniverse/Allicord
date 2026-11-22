@@ -26,6 +26,7 @@ export function DonateButton({
     equicord = false,
     allicord = false,
     className,
+    variant = "none",
     ...props
 }: Partial<ButtonProps> & { equicord?: boolean; allicord?: boolean; }) {
     const link = allicord
@@ -35,10 +36,10 @@ export function DonateButton({
             : "https://github.com/sponsors/Vendicated";
     return (
         <Button
-            {...props}
-            variant="none"
             size="medium"
             type="button"
+            variant={variant}
+            {...props}
             onClick={() => VencordNative.native.openExternal(link)}
             className={className || "vc-donate-button"}
         >
@@ -50,14 +51,15 @@ export function DonateButton({
 
 export function InviteButton({
     className,
+    variant = "none",
     ...props
 }: Partial<ButtonProps>) {
     return (
         <Button
-            {...props}
-            variant="none"
             size="medium"
             type="button"
+            variant={variant}
+            {...props}
             onClick={async e => {
                 e.preventDefault();
                 openInviteModal("XszKXdqaZP").catch(() =>
@@ -74,15 +76,16 @@ export function InviteButton({
 
 export function TranslateButton({
     className,
+    variant = "none",
     ...props
 }: Partial<ButtonProps>) {
     const link = "https://weblate.equicord.org/projects/equicord/";
     return (
         <Button
-            {...props}
-            variant="none"
             size="medium"
             type="button"
+            variant={variant}
+            {...props}
             onClick={() => VencordNative.native.openExternal(link)}
             className={className || "vc-translate-button"}
         >

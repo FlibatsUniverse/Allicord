@@ -24,7 +24,6 @@ import NoTrack from "@plugins/_core/noTrack";
 import SettingsPlugin from "@plugins/_core/settings";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { DONOR_ROLE_ID, GUILD_ID, IS_WINDOWS, VC_DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/constants";
-import { classNameFactory } from "@utils/css";
 import { Margins } from "@utils/margins";
 import { isAnyPluginDev } from "@utils/misc";
 import { relaunch } from "@utils/native";
@@ -34,18 +33,18 @@ import { GuildMemberStore, React, useMemo, UserStore } from "@webpack/common";
 import { DonateButtonComponent } from "./DonateButton";
 import { MacOSVibrancySettings } from "./MacVibrancySettings";
 import { NotificationSection } from "./NotificationSettings";
+import { openPlayground } from "./playground";
 import { WindowsMaterialSettings } from "./WindowsMaterialSettings";
 
 const DEFAULT_DONATE_IMAGE = "https://cdn.discordapp.com/emojis/1026533090627174460.png";
 const SHIGGY_DONATE_IMAGE = SourceIcons.allicord;
 
 const VENNIE_DONATOR_IMAGE = "https://cdn.discordapp.com/emojis/1238120638020063377.png";
+const EQUICORD_DONOR_IMAGE = "https://cdn.discordapp.com/emojis/1026533090627174460.png";
 const COZY_CONTRIB_IMAGE = "https://cdn.discordapp.com/emojis/1026533070955872337.png";
 
 const DONOR_BACKGROUND_IMAGE = "https://media.discordapp.net/stickers/1311070116305436712.png?size=2048";
 const CONTRIB_BACKGROUND_IMAGE = "https://media.discordapp.net/stickers/1311070166481895484.png?size=2048";
-
-const cl = classNameFactory("vc-vencord-tab-");
 
 type KeysOfType<Object, Type> = {
     [K in keyof Object]: Object[K] extends Type ? K : never;
@@ -71,6 +70,12 @@ function Switches() {
             title: "Block Discord Analytics",
             description: NoTrack.settings.def.disableAnalytics.description,
             restartRequired: NoTrack.settings.def.disableAnalytics.restartNeeded,
+        },
+        !IS_WEB && {
+            key: "enableBackgroundRendering",
+            title: "Enable Background Rendering",
+            description: "Keeps the app window updating even when it is not fully focused",
+            restartRequired: true
         },
         (!IS_WEB && !IS_DISCORD_DESKTOP || !IS_WINDOWS) && {
             key: "mainWindowFrameless",
@@ -185,6 +190,7 @@ function AllicordSettings() {
         <SettingsTab>
             {(isEquicordDonor(user?.id) || isVencordDonor(user?.id)) ? (
                 <SpecialCard
+                    className={isEquicordDonor(user?.id) && !isVencordDonor(user?.id) ? "vc-special-card-dark" : ""}
                     title="Donations"
                     subtitle="Thank you for donating!"
                     description={
@@ -194,19 +200,20 @@ function AllicordSettings() {
                                 ? "All Vencord users can see your badge! You can manage your perks by messaging @vending.machine."
                                 : "All Equicord users can see your badge! You can manage your perks by making a ticket in Equicord's server."
                     }
-                    cardImage={VENNIE_DONATOR_IMAGE}
+                    cardImage={isEquicordDonor(user?.id) && !isVencordDonor(user?.id) ? EQUICORD_DONOR_IMAGE : VENNIE_DONATOR_IMAGE}
                     backgroundImage={DONOR_BACKGROUND_IMAGE}
-                    backgroundColor="#ED87A9"
+                    backgroundColor={isEquicordDonor(user?.id) && !isVencordDonor(user?.id) ? "#232428" : "#ED87A9"}
                 >
                     <DonateButtonComponent donated={true} />
                 </SpecialCard>
             ) : (
                 <SpecialCard
+                    className="vc-special-card-dark"
                     title="Support the Project"
                     description="Please consider supporting the development of Allicord by donating!"
                     cardImage={donateImage}
                     backgroundImage={DONOR_BACKGROUND_IMAGE}
-                    backgroundColor="#c3a3ce"
+                    backgroundColor="#232428"
                 >
                     <DonateButtonComponent />
                 </SpecialCard>
@@ -272,6 +279,11 @@ function AllicordSettings() {
                         )
                     }
                 />
+                {IS_DEV && <QuickAction
+                    Icon={PaintbrushIcon}
+                    text="Open Component Playground"
+                    action={() => openPlayground()}
+                />}
             </QuickActionCard>
 
             <Divider className={Margins.top20} />
